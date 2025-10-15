@@ -1,0 +1,37 @@
+<div class="flex flex-wrap mb-6">
+    <h1 class="grow text-3xl md:text-4xl font-medium mb-2" i18n="@@media.list.headline">Mediasss</h1>
+    <div>
+        <a routerLink="/medias/add" class="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2" i18n="@@media.list.createNew">Create new Media</a>
+    </div>
+</div>
+@if (!medias || medias.length === 0) {
+<div i18n="@@media.list.empty">No Medias could be found.</div>
+} @else {
+<div class="overflow-x-auto">
+    <table class="w-full">
+        <thead>
+            <tr>
+                <th scope="col" class="text-left p-2" i18n="@@media.id.label">Id</th>
+                <th scope="col" class="text-left p-2" i18n="@@media.title.label">Title</th>
+                <th scope="col" class="text-left p-2" i18n="@@media.type.label">Type</th>
+                <th><!-- --></th>
+            </tr>
+        </thead>
+        <tbody class="border-t-2 border-black">
+            @for (media of medias; track media.id) {
+            <tr class="odd:bg-gray-100">
+                <td class="p-2">{{ media.id }}</td>
+                <td class="p-2">{{ media.title }}</td>
+                <td class="p-2">{{ media.type }}</td>
+                <td class="p-2">
+                    <div class="float-right whitespace-nowrap">
+                        <a [routerLink]="['/medias/edit', media.id]" class="inline-block text-white bg-gray-500 hover:bg-gray-600 focus:ring-gray-200 focus:ring-3 rounded px-2.5 py-1.5 text-sm" i18n="@@media.list.edit">Edit</a>
+                        <button type="button" (click)="confirmDelete(media.id!)" class="inline-block text-white bg-gray-500 hover:bg-gray-600 focus:ring-gray-200 focus:ring-3 rounded px-2.5 py-1.5 text-sm cursor-pointer" i18n="@@media.list.delete">Delete</button>
+                    </div>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+}

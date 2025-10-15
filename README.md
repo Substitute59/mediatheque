@@ -1,59 +1,57 @@
 # Mediatheque
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.3.
+This app was created with Bootify.io - tips on working with the code [can be found here](https://bootify.io/next-steps/).
 
-## Development server
+## Development
 
-To start a local development server, run:
+Update your local database connection in `application.yml` or create your own `application-local.yml` file to override settings for development.
 
-```bash
+During development it is recommended to use the profile `local`. In IntelliJ `-Dspring.profiles.active=local` can be added in the VM options of the Run Configuration after enabling this property in "Modify options".
+
+In addition to the Spring Boot application, the development server must also be started - for this [Node.js](https://nodejs.org/) version 22 is required. Angular CLI and required dependencies must be installed once:
+
+```
+npm install -g @angular/cli
+npm install
+```
+
+The development server can be started as follows:
+
+```
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Your application is now accessible under `localhost:4200`.
 
-## Code scaffolding
+Add code using Angular schematics with `ng generate ...`.
+Frontend unit tests can be executed with `ng test`.
+Generate a messages.json for translation with `ng extract-i18n --format=json`.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Build
 
-```bash
-ng generate component component-name
+The application can be built using the following command:
+
+```
+mvnw clean package
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Start your application with the following command - here with the profile `production`:
 
-```bash
-ng generate --help
+```
+java -Dspring.profiles.active=production -jar ./target/mediatheque-0.0.1-SNAPSHOT.jar
 ```
 
-## Building
+If required, a Docker image can be created with the Spring Boot plugin. Add `SPRING_PROFILES_ACTIVE=production` as environment variable when running the container.
 
-To build the project run:
-
-```bash
-ng build
+```
+mvnw spring-boot:build-image -Dspring-boot.build-image.imageName=com.mediatheque/mediatheque
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Further readings
 
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+* [Maven docs](https://maven.apache.org/guides/index.html)  
+* [Spring Boot reference](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)  
+* [Spring Data JPA reference](https://docs.spring.io/spring-data/jpa/reference/jpa.html)
+* [Learn Angular](https://angular.dev/tutorials/learn-angular)  
+* [Angular CLI](https://angular.dev/tools/cli)
+* [Tailwind CSS](https://tailwindcss.com/)  
