@@ -1,0 +1,11 @@
+<div class="flex flex-wrap mb-6">
+    <h1 class="grow text-3xl md:text-4xl font-medium mb-2" i18n="@@tag.edit.headline">Edit Tag</h1>
+    <div>
+        <a routerLink="/tags" class="inline-block text-white bg-gray-500 hover:bg-gray-600 focus:ring-gray-200 focus:ring-4 rounded px-5 py-2" i18n="@@tag.edit.back">Back to list</a>
+    </div>
+</div>
+<form [formGroup]="editForm" (ngSubmit)="handleSubmit()">
+    <app-input-row [group]="editForm" field="id" rowType="number" i18n-label="@@tag.id.label" label="Id" />
+    <app-input-row [group]="editForm" field="name" i18n-label="@@tag.name.label" label="Name" />
+    <input type="submit" i18n-value="@@tag.edit.headline" value="Edit Tag" class="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2 cursor-pointer mt-6" />
+</form>

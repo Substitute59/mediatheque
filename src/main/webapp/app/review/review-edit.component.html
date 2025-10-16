@@ -1,0 +1,15 @@
+<div class="flex flex-wrap mb-6">
+    <h1 class="grow text-3xl md:text-4xl font-medium mb-2" i18n="@@review.edit.headline">Edit Review</h1>
+    <div>
+        <a routerLink="/reviews" class="inline-block text-white bg-gray-500 hover:bg-gray-600 focus:ring-gray-200 focus:ring-4 rounded px-5 py-2" i18n="@@review.edit.back">Back to list</a>
+    </div>
+</div>
+<form [formGroup]="editForm" (ngSubmit)="handleSubmit()">
+    <app-input-row [group]="editForm" field="id" rowType="number" i18n-label="@@review.id.label" label="Id" />
+    <app-input-row [group]="editForm" field="rating" rowType="number" i18n-label="@@review.rating.label" label="Rating" />
+    <app-input-row [group]="editForm" field="comment" rowType="textarea" i18n-label="@@review.comment.label" label="Comment" />
+    <app-input-row [group]="editForm" field="createdAt" i18n-label="@@review.createdAt.label" label="Created At" />
+    <app-input-row [group]="editForm" field="media" rowType="select" [options]="mediaValues" i18n-label="@@review.media.label" label="Media" />
+    <app-input-row [group]="editForm" field="user" rowType="select" [options]="userValues" i18n-label="@@review.user.label" label="User" />
+    <input type="submit" i18n-value="@@review.edit.headline" value="Edit Review" class="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2 cursor-pointer mt-6" />
+</form>

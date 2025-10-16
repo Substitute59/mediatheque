@@ -2,6 +2,8 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'environments/environment';
 import { MediaDTO } from 'app/media/media.model';
+import { map } from 'rxjs';
+import { transformRecordToMap } from 'app/common/utils';
 
 
 @Injectable({
@@ -30,6 +32,36 @@ export class MediaService {
 
   deleteMedia(id: number) {
     return this.http.delete(this.resourcePath + '/' + id);
+  }
+
+  getMediaTypeValues() {
+    return this.http.get<Record<string, string>>(this.resourcePath + '/mediaTypeValues')
+        .pipe(map(transformRecordToMap));
+  }
+
+  getGenreValues() {
+    return this.http.get<Record<string, string>>(this.resourcePath + '/genreValues')
+        .pipe(map(transformRecordToMap));
+  }
+
+  getPlatformValues() {
+    return this.http.get<Record<string, string>>(this.resourcePath + '/platformValues')
+        .pipe(map(transformRecordToMap));
+  }
+
+  getFlagValues() {
+    return this.http.get<Record<string, string>>(this.resourcePath + '/flagValues')
+        .pipe(map(transformRecordToMap));
+  }
+
+  getCreatedByValues() {
+    return this.http.get<Record<string, string>>(this.resourcePath + '/createdByValues')
+        .pipe(map(transformRecordToMap));
+  }
+
+  getMediaTagTagsValues() {
+    return this.http.get<Record<string, string>>(this.resourcePath + '/mediaTagTagsValues')
+        .pipe(map(transformRecordToMap));
   }
 
 }

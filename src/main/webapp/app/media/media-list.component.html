@@ -1,5 +1,5 @@
 <div class="flex flex-wrap mb-6">
-    <h1 class="grow text-3xl md:text-4xl font-medium mb-2" i18n="@@media.list.headline">Mediasss</h1>
+    <h1 class="grow text-3xl md:text-4xl font-medium mb-2" i18n="@@media.list.headline">Medias</h1>
     <div>
         <a routerLink="/medias/add" class="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2" i18n="@@media.list.createNew">Create new Media</a>
     </div>
@@ -13,7 +13,12 @@
             <tr>
                 <th scope="col" class="text-left p-2" i18n="@@media.id.label">Id</th>
                 <th scope="col" class="text-left p-2" i18n="@@media.title.label">Title</th>
-                <th scope="col" class="text-left p-2" i18n="@@media.type.label">Type</th>
+                <th scope="col" class="text-left p-2" i18n="@@media.coverUrl.label">Cover Url</th>
+                <th scope="col" class="text-left p-2" i18n="@@media.createdAt.label">Created At</th>
+                <th scope="col" class="text-left p-2" i18n="@@media.updatedAt.label">Updated At</th>
+                <th scope="col" class="text-left p-2" i18n="@@media.mediaType.label">Media Type</th>
+                <th scope="col" class="text-left p-2" i18n="@@media.genre.label">Genre</th>
+                <th scope="col" class="text-left p-2" i18n="@@media.platform.label">Platform</th>
                 <th><!-- --></th>
             </tr>
         </thead>
@@ -22,7 +27,12 @@
             <tr class="odd:bg-gray-100">
                 <td class="p-2">{{ media.id }}</td>
                 <td class="p-2">{{ media.title }}</td>
-                <td class="p-2">{{ media.type }}</td>
+                <td class="p-2">{{ media.coverUrl }}</td>
+                <td class="p-2">{{ media.createdAt }}</td>
+                <td class="p-2">{{ media.updatedAt }}</td>
+                <td class="p-2">{{ media.mediaType }}</td>
+                <td class="p-2">{{ media.genre }}</td>
+                <td class="p-2">{{ media.platform }}</td>
                 <td class="p-2">
                     <div class="float-right whitespace-nowrap">
                         <a [routerLink]="['/medias/edit', media.id]" class="inline-block text-white bg-gray-500 hover:bg-gray-600 focus:ring-gray-200 focus:ring-3 rounded px-2.5 py-1.5 text-sm" i18n="@@media.list.edit">Edit</a>

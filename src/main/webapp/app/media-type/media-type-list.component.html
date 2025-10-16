@@ -1,0 +1,35 @@
+<div class="flex flex-wrap mb-6">
+    <h1 class="grow text-3xl md:text-4xl font-medium mb-2" i18n="@@mediaType.list.headline">Media Types</h1>
+    <div>
+        <a routerLink="/mediaTypes/add" class="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2" i18n="@@mediaType.list.createNew">Create new Media Type</a>
+    </div>
+</div>
+@if (!mediaTypes || mediaTypes.length === 0) {
+<div i18n="@@mediaType.list.empty">No Media Types could be found.</div>
+} @else {
+<div class="overflow-x-auto">
+    <table class="w-full">
+        <thead>
+            <tr>
+                <th scope="col" class="text-left p-2" i18n="@@mediaType.id.label">Id</th>
+                <th scope="col" class="text-left p-2" i18n="@@mediaType.name.label">Name</th>
+                <th><!-- --></th>
+            </tr>
+        </thead>
+        <tbody class="border-t-2 border-black">
+            @for (mediaType of mediaTypes; track mediaType.id) {
+            <tr class="odd:bg-gray-100">
+                <td class="p-2">{{ mediaType.id }}</td>
+                <td class="p-2">{{ mediaType.name }}</td>
+                <td class="p-2">
+                    <div class="float-right whitespace-nowrap">
+                        <a [routerLink]="['/mediaTypes/edit', mediaType.id]" class="inline-block text-white bg-gray-500 hover:bg-gray-600 focus:ring-gray-200 focus:ring-3 rounded px-2.5 py-1.5 text-sm" i18n="@@mediaType.list.edit">Edit</a>
+                        <button type="button" (click)="confirmDelete(mediaType.id!)" class="inline-block text-white bg-gray-500 hover:bg-gray-600 focus:ring-gray-200 focus:ring-3 rounded px-2.5 py-1.5 text-sm cursor-pointer" i18n="@@mediaType.list.delete">Delete</button>
+                    </div>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+}

@@ -22,7 +22,12 @@ export class MediaListComponent implements OnInit, OnDestroy {
   getMessage(key: string, details?: any) {
     const messages: Record<string, string> = {
       confirm: $localize`:@@delete.confirm:Do you really want to delete this element? This cannot be undone.`,
-      deleted: $localize`:@@media.delete.success:Media was removed successfully.`    };
+      deleted: $localize`:@@media.delete.success:Media was removed successfully.`,
+      'media.mediaArtist.media.referenced': $localize`:@@media.mediaArtist.media.referenced:This entity is still referenced by Media Artist ${details?.id} via field Media.`,
+      'media.mediaCollection.media.referenced': $localize`:@@media.mediaCollection.media.referenced:This entity is still referenced by Media Collection ${details?.id} via field Media.`,
+      'media.review.media.referenced': $localize`:@@media.review.media.referenced:This entity is still referenced by Review ${details?.id} via field Media.`,
+      'media.userMedia.media.referenced': $localize`:@@media.userMedia.media.referenced:This entity is still referenced by User Media ${details?.id} via field Media.`
+    };
     return messages[key];
   }
 
@@ -58,7 +63,18 @@ export class MediaListComponent implements OnInit, OnDestroy {
               msgInfo: this.getMessage('deleted')
             }
           }),
-          error: (error) => this.errorHandler.handleServerError(error.error)
+          error: (error) => {
+            if (error.error?.code === 'REFERENCED') {
+              const messageParts = error.error.message.split(',');
+              this.router.navigate(['/medias'], {
+                state: {
+                  msgError: this.getMessage(messageParts[0], { id: messageParts[1] })
+                }
+              });
+              return;
+            }
+            this.errorHandler.handleServerError(error.error)
+          }
         });
   }
 

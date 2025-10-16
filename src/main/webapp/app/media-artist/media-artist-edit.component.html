@@ -1,0 +1,13 @@
+<div class="flex flex-wrap mb-6">
+    <h1 class="grow text-3xl md:text-4xl font-medium mb-2" i18n="@@mediaArtist.edit.headline">Edit Media Artist</h1>
+    <div>
+        <a routerLink="/mediaArtists" class="inline-block text-white bg-gray-500 hover:bg-gray-600 focus:ring-gray-200 focus:ring-4 rounded px-5 py-2" i18n="@@mediaArtist.edit.back">Back to list</a>
+    </div>
+</div>
+<form [formGroup]="editForm" (ngSubmit)="handleSubmit()">
+    <app-input-row [group]="editForm" field="id" rowType="number" i18n-label="@@mediaArtist.id.label" label="Id" />
+    <app-input-row [group]="editForm" field="role" i18n-label="@@mediaArtist.role.label" label="Role" />
+    <app-input-row [group]="editForm" field="media" rowType="select" [options]="mediaValues" i18n-label="@@mediaArtist.media.label" label="Media" />
+    <app-input-row [group]="editForm" field="artist" rowType="select" [options]="artistValues" i18n-label="@@mediaArtist.artist.label" label="Artist" />
+    <input type="submit" i18n-value="@@mediaArtist.edit.headline" value="Edit Media Artist" class="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2 cursor-pointer mt-6" />
+</form>

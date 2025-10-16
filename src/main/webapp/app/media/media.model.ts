@@ -6,6 +6,15 @@ export class MediaDTO {
 
   id?: number|null;
   title?: string|null;
-  type?: string|null;
+  description?: string|null;
+  coverUrl?: string|null;
+  createdAt?: string|null;
+  updatedAt?: string|null;
+  mediaType?: number|null;
+  genre?: number|null;
+  platform?: number|null;
+  flag?: number|null;
+  createdBy?: number|null;
+  mediaTagTags?: number[]|null;
 
 }

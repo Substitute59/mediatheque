@@ -6,6 +6,15 @@
 </div>
 <form [formGroup]="addForm" (ngSubmit)="handleSubmit()">
     <app-input-row [group]="addForm" field="title" i18n-label="@@media.title.label" label="Title" />
-    <app-input-row [group]="addForm" field="type" i18n-label="@@media.type.label" label="Type" />
+    <app-input-row [group]="addForm" field="description" rowType="textarea" i18n-label="@@media.description.label" label="Description" />
+    <app-input-row [group]="addForm" field="coverUrl" i18n-label="@@media.coverUrl.label" label="Cover Url" />
+    <app-input-row [group]="addForm" field="createdAt" i18n-label="@@media.createdAt.label" label="Created At" />
+    <app-input-row [group]="addForm" field="updatedAt" i18n-label="@@media.updatedAt.label" label="Updated At" />
+    <app-input-row [group]="addForm" field="mediaType" rowType="select" [options]="mediaTypeValues" i18n-label="@@media.mediaType.label" label="Media Type" />
+    <app-input-row [group]="addForm" field="genre" rowType="select" [options]="genreValues" i18n-label="@@media.genre.label" label="Genre" />
+    <app-input-row [group]="addForm" field="platform" rowType="select" [options]="platformValues" i18n-label="@@media.platform.label" label="Platform" />
+    <app-input-row [group]="addForm" field="flag" rowType="select" [options]="flagValues" i18n-label="@@media.flag.label" label="Flag" />
+    <app-input-row [group]="addForm" field="createdBy" rowType="select" [options]="createdByValues" i18n-label="@@media.createdBy.label" label="Created By" />
+    <app-input-row [group]="addForm" field="mediaTagTags" rowType="multiselect" [options]="mediaTagTagsValues" i18n-label="@@media.mediaTagTags.label" label="Media Tag Tags" />
     <input type="submit" i18n-value="@@media.add.headline" value="Add Media" class="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2 cursor-pointer mt-6" />
 </form>

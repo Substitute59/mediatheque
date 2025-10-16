@@ -1,0 +1,41 @@
+<div class="flex flex-wrap mb-6">
+    <h1 class="grow text-3xl md:text-4xl font-medium mb-2" i18n="@@mediaCollection.list.headline">Media Collections</h1>
+    <div>
+        <a routerLink="/mediaCollections/add" class="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2" i18n="@@mediaCollection.list.createNew">Create new Media Collection</a>
+    </div>
+</div>
+@if (!mediaCollections || mediaCollections.length === 0) {
+<div i18n="@@mediaCollection.list.empty">No Media Collections could be found.</div>
+} @else {
+<div class="overflow-x-auto">
+    <table class="w-full">
+        <thead>
+            <tr>
+                <th scope="col" class="text-left p-2" i18n="@@mediaCollection.id.label">Id</th>
+                <th scope="col" class="text-left p-2" i18n="@@mediaCollection.position.label">Position</th>
+                <th scope="col" class="text-left p-2" i18n="@@mediaCollection.type.label">Type</th>
+                <th scope="col" class="text-left p-2" i18n="@@mediaCollection.media.label">Media</th>
+                <th scope="col" class="text-left p-2" i18n="@@mediaCollection.collection.label">Collection</th>
+                <th><!-- --></th>
+            </tr>
+        </thead>
+        <tbody class="border-t-2 border-black">
+            @for (mediaCollection of mediaCollections; track mediaCollection.id) {
+            <tr class="odd:bg-gray-100">
+                <td class="p-2">{{ mediaCollection.id }}</td>
+                <td class="p-2">{{ mediaCollection.position }}</td>
+                <td class="p-2">{{ mediaCollection.type }}</td>
+                <td class="p-2">{{ mediaCollection.media }}</td>
+                <td class="p-2">{{ mediaCollection.collection }}</td>
+                <td class="p-2">
+                    <div class="float-right whitespace-nowrap">
+                        <a [routerLink]="['/mediaCollections/edit', mediaCollection.id]" class="inline-block text-white bg-gray-500 hover:bg-gray-600 focus:ring-gray-200 focus:ring-3 rounded px-2.5 py-1.5 text-sm" i18n="@@mediaCollection.list.edit">Edit</a>
+                        <button type="button" (click)="confirmDelete(mediaCollection.id!)" class="inline-block text-white bg-gray-500 hover:bg-gray-600 focus:ring-gray-200 focus:ring-3 rounded px-2.5 py-1.5 text-sm cursor-pointer" i18n="@@mediaCollection.list.delete">Delete</button>
+                    </div>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+}

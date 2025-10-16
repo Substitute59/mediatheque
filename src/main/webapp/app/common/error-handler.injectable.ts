@@ -68,7 +68,9 @@ export class ErrorHandler {
 export function getGlobalErrorMessage(key: string, details?: any) {
   let globalErrorMessages: Record<string, string> = {
     required: $localize`:@@required:Please provide a value.`,
-    maxlength: $localize`:@@maxlength:Your value must have a length of less then ${details?.requiredLength} characters.`
+    maxlength: $localize`:@@maxlength:Your value must have a length of less then ${details?.requiredLength} characters.`,
+    validOffsetDateTime: $localize`:@@valid.offsetDateTime:Please provide a valid date with offset, for example "2026-01-23T14:55:00+01:00".`,
+    REQUIRED_NOT_NULL: $localize`:@@required:Please provide a value.`
   };
   return globalErrorMessages[key];
 }

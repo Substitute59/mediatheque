@@ -1,9 +1,16 @@
 package com.mediatheque.mediatheque.rest;
 
 import com.mediatheque.mediatheque.model.MediaDTO;
+import com.mediatheque.mediatheque.service.FlagService;
+import com.mediatheque.mediatheque.service.GenreService;
 import com.mediatheque.mediatheque.service.MediaService;
+import com.mediatheque.mediatheque.service.MediaTypeService;
+import com.mediatheque.mediatheque.service.PlatformService;
+import com.mediatheque.mediatheque.service.TagService;
+import com.mediatheque.mediatheque.service.UserService;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +29,24 @@ import org.springframework.web.bind.annotation.RestController;
 public class MediaResource {
 
     private final MediaService mediaService;
+    private final MediaTypeService mediaTypeService;
+    private final GenreService genreService;
+    private final PlatformService platformService;
+    private final FlagService flagService;
+    private final UserService userService;
+    private final TagService tagService;
 
-    public MediaResource(final MediaService mediaService) {
+    public MediaResource(final MediaService mediaService, final MediaTypeService mediaTypeService,
+            final GenreService genreService, final PlatformService platformService,
+            final FlagService flagService, final UserService userService,
+            final TagService tagService) {
         this.mediaService = mediaService;
+        this.mediaTypeService = mediaTypeService;
+        this.genreService = genreService;
+        this.platformService = platformService;
+        this.flagService = flagService;
+        this.userService = userService;
+        this.tagService = tagService;
     }
 
     @GetMapping
@@ -33,27 +55,57 @@ public class MediaResource {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MediaDTO> getMedia(@PathVariable(name = "id") final Long id) {
+    public ResponseEntity<MediaDTO> getMedia(@PathVariable(name = "id") final Integer id) {
         return ResponseEntity.ok(mediaService.get(id));
     }
 
     @PostMapping
-    public ResponseEntity<Long> createMedia(@RequestBody @Valid final MediaDTO mediaDTO) {
-        final Long createdId = mediaService.create(mediaDTO);
+    public ResponseEntity<Integer> createMedia(@RequestBody @Valid final MediaDTO mediaDTO) {
+        final Integer createdId = mediaService.create(mediaDTO);
         return new ResponseEntity<>(createdId, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Long> updateMedia(@PathVariable(name = "id") final Long id,
+    public ResponseEntity<Integer> updateMedia(@PathVariable(name = "id") final Integer id,
             @RequestBody @Valid final MediaDTO mediaDTO) {
         mediaService.update(id, mediaDTO);
         return ResponseEntity.ok(id);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMedia(@PathVariable(name = "id") final Long id) {
+    public ResponseEntity<Void> deleteMedia(@PathVariable(name = "id") final Integer id) {
         mediaService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/mediaTypeValues")
+    public ResponseEntity<Map<Integer, String>> getMediaTypeValues() {
+        return ResponseEntity.ok(mediaTypeService.getMediaTypeValues());
+    }
+
+    @GetMapping("/genreValues")
+    public ResponseEntity<Map<Integer, String>> getGenreValues() {
+        return ResponseEntity.ok(genreService.getGenreValues());
+    }
+
+    @GetMapping("/platformValues")
+    public ResponseEntity<Map<Integer, String>> getPlatformValues() {
+        return ResponseEntity.ok(platformService.getPlatformValues());
+    }
+
+    @GetMapping("/flagValues")
+    public ResponseEntity<Map<Integer, String>> getFlagValues() {
+        return ResponseEntity.ok(flagService.getFlagValues());
+    }
+
+    @GetMapping("/createdByValues")
+    public ResponseEntity<Map<Integer, String>> getCreatedByValues() {
+        return ResponseEntity.ok(userService.getUserValues());
+    }
+
+    @GetMapping("/mediaTagTagsValues")
+    public ResponseEntity<Map<Integer, String>> getMediaTagTagsValues() {
+        return ResponseEntity.ok(tagService.getTagValues());
     }
 
 }
