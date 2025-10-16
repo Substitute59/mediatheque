@@ -27,6 +27,7 @@ export class UserEditComponent implements OnInit {
     id: new FormControl({ value: null, disabled: true }),
     username: new FormControl(null, [Validators.required, Validators.maxLength(100)]),
     password: new FormControl(null, [Validators.required, Validators.maxLength(255)]),
+    avatar: new FormControl(null, [Validators.maxLength(255)]),
     role: new FormControl(null, [Validators.maxLength(255)]),
     createdAt: new FormControl(null, [validOffsetDateTime])
   }, { updateOn: 'submit' });

@@ -18,6 +18,9 @@ public class UserDTO {
     private String password;
 
     @Size(max = 255)
+    private String avatar;
+
+    @Size(max = 255)
     private String role;
 
     private OffsetDateTime createdAt;
@@ -44,6 +47,14 @@ public class UserDTO {
 
     public void setPassword(final String password) {
         this.password = password;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(final String avatar) {
+        this.avatar = avatar;
     }
 
     public String getRole() {

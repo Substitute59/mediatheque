@@ -7,6 +7,7 @@
 <form [formGroup]="addForm" (ngSubmit)="handleSubmit()">
     <app-input-row [group]="addForm" field="username" i18n-label="@@user.username.label" label="Username" />
     <app-input-row [group]="addForm" field="password" i18n-label="@@user.password.label" label="Password" />
+    <app-input-row [group]="addForm" field="avatar" i18n-label="@@user.avatar.label" label="Avatar" />
     <app-input-row [group]="addForm" field="role" i18n-label="@@user.role.label" label="Role" />
     <app-input-row [group]="addForm" field="createdAt" i18n-label="@@user.createdAt.label" label="Created At" />
     <input type="submit" i18n-value="@@user.add.headline" value="Add User" class="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2 cursor-pointer mt-6" />

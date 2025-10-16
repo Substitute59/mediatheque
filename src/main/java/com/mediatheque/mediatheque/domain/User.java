@@ -25,6 +25,9 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Column
+    private String avatar;
+
     @Column(name = "\"role\"")
     private String role;
 
@@ -62,6 +65,14 @@ public class User {
 
     public void setPassword(final String password) {
         this.password = password;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(final String avatar) {
+        this.avatar = avatar;
     }
 
     public String getRole() {

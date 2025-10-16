@@ -7,6 +7,7 @@ export class UserDTO {
   id?: number|null;
   username?: string|null;
   password?: string|null;
+  avatar?: string|null;
   role?: string|null;
   createdAt?: string|null;
 

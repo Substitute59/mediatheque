@@ -62,6 +62,7 @@ public class UserService {
         userDTO.setId(user.getId());
         userDTO.setUsername(user.getUsername());
         userDTO.setPassword(user.getPassword());
+        userDTO.setAvatar(user.getAvatar());
         userDTO.setRole(user.getRole());
         userDTO.setCreatedAt(user.getCreatedAt());
         return userDTO;
@@ -70,6 +71,7 @@ public class UserService {
     private User mapToEntity(final UserDTO userDTO, final User user) {
         user.setUsername(userDTO.getUsername());
         user.setPassword(userDTO.getPassword());
+        user.setAvatar(userDTO.getAvatar());
         user.setRole(userDTO.getRole());
         user.setCreatedAt(userDTO.getCreatedAt());
         return user;
