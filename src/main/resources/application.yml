@@ -18,10 +18,10 @@ spring:
         id:
           new_generator_mappings: true
   mail:
-    host: bente.o2switch.net
+    host: ${MAIL_HOST}
     port: 587
-    username: dev@fumi2936.odns.fr
-    password: "D2,rs.m;Aw^T"
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
