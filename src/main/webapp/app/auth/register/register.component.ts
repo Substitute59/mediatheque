@@ -87,7 +87,7 @@ export class RegisterComponent {
       },
       error: () => {
         this.errorMessage = $localize`:@@registerError:Cet email est déjà utilisé`;
-        this.errorField = 'email';
+        this.errorField = 'username';
       }
     });
   }

@@ -44,11 +44,30 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                    "/", 
+                    "/index.html",
+                    "/favicon.ico",
+                    "/assets/**",
+                    "/media/**",
+                    "/*.js",
+                    "/*.css",
+                    "/*.woff2",
+                    "/*.woff",
+                    "/*.ttf",
+                    "/*.svg",
+                    "/*.png",
+                    "/*.jpg"
+                ).permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .headers(headers -> headers
+                .frameOptions(frame -> frame.sameOrigin())
+                .contentTypeOptions(contentType -> {})
+            );
 
         return http.build();
     }
