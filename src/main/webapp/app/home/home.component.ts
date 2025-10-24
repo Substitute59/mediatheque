@@ -1,17 +1,19 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { environment } from 'environments/environment';
-import { RouterLink } from '@angular/router';
-
+import { AuthService } from '../auth/auth.service';
+import { LoginComponent } from '../auth/login/login.component';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, RouterLink],
+  imports: [
+    CommonModule,
+    LoginComponent
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
+  constructor(private auth: AuthService) {}
 
-  environment = environment;
-
+  user$ = this.auth.currentUser
 }

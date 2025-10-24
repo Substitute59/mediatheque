@@ -21,6 +21,9 @@ public class UserDTO {
     private String avatar;
 
     @Size(max = 255)
+    private String refreshToken;
+
+    @Size(max = 255)
     private String role;
 
     private OffsetDateTime createdAt;
@@ -55,6 +58,14 @@ public class UserDTO {
 
     public void setAvatar(final String avatar) {
         this.avatar = avatar;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(final String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
     public String getRole() {

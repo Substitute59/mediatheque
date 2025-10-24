@@ -1,9 +1,13 @@
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, ExtraOptions, TitleStrategy } from '@angular/router';
 import { routes } from 'app/app.routes';
 import { CustomTitleStrategy } from 'app/common/title-strategy.injectable';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { providePrimeNG } from 'primeng/config';
+import Aura from '@primeuix/themes/aura';
+import { AuthInterceptor } from './auth/auth.interceptor';
 
 
 const routeConfig: ExtraOptions = {
@@ -14,10 +18,21 @@ const routeConfig: ExtraOptions = {
 export const appConfig: ApplicationConfig = {
   providers: [
     importProvidersFrom(RouterModule.forRoot(routes, routeConfig), BrowserAnimationsModule, HttpClientModule),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    },
     provideZoneChangeDetection({ eventCoalescing: true }),
     {
       provide: TitleStrategy,
       useClass: CustomTitleStrategy
-    }
+    },
+    provideAnimationsAsync(),
+    providePrimeNG({
+        theme: {
+            preset: Aura
+        }
+    })
   ]
 };

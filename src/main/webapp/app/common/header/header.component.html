@@ -1,47 +1,21 @@
-<header class="bg-gray-50">
-    <div class="container mx-auto px-4 md:px-6">
-        <nav class="flex flex-wrap items-center justify-between py-2">
-            <a routerLink="/" class="flex py-1.5 mr-4">
-                <img ngSrc="logo.png" i18n-alt="@@app.title" alt="Mediatheque" width="30" height="30" class="inline-block" />
-                <span class="text-xl pl-3" i18n="@@app.title">Mediatheque</span>
-            </a>
-            <button type="button" class="js-dropdown md:hidden border rounded cursor-pointer" data-dropdown-keepopen="true"
-                    i18n-aria-label="@@navigation.toggle" aria-label="Toggle navigation" aria-controls="navbarToggle" aria-expanded="false">
-                <div class="space-y-1.5 my-2.5 mx-4">
-                    <div class="w-6 h-0.5 bg-gray-500"></div>
-                    <div class="w-6 h-0.5 bg-gray-500"></div>
-                    <div class="w-6 h-0.5 bg-gray-500"></div>
-                </div>
-            </button>
-            <div class="hidden md:block flex grow md:grow-0 justify-end basis-full md:basis-auto pt-3 md:pt-1 pb-1" id="navbarToggle">
-                <ul class="flex">
-                    <li>
-                        <a routerLink="/" class="block text-gray-500 p-2" i18n="@@navigation.home">Home</a>
-                    </li>
-                    <li class="relative">
-                        <button type="button" class="js-dropdown block text-gray-500 p-2 cursor-pointer" id="navbarEntitiesLink"
-                                aria-expanded="false">
-                            <span i18n="@@navigation.entities">Entities</span>
-                            <span class="text-[9px] align-[3px] pl-0.5">&#9660;</span>
-                        </button>
-                        <ul class="hidden block absolute right-0 bg-white border border-gray-300 rounded min-w-[10rem] py-2" aria-labelledby="navbarEntitiesLink">
-                            <li><a routerLink="/users" class="inline-block w-full hover:bg-gray-200 px-4 py-1" i18n="@@user.list.headline">Users</a></li>
-                            <li><a routerLink="/mediaTypes" class="inline-block w-full hover:bg-gray-200 px-4 py-1" i18n="@@mediaType.list.headline">Media Types</a></li>
-                            <li><a routerLink="/genres" class="inline-block w-full hover:bg-gray-200 px-4 py-1" i18n="@@genre.list.headline">Genres</a></li>
-                            <li><a routerLink="/artists" class="inline-block w-full hover:bg-gray-200 px-4 py-1" i18n="@@artist.list.headline">Artists</a></li>
-                            <li><a routerLink="/platforms" class="inline-block w-full hover:bg-gray-200 px-4 py-1" i18n="@@platform.list.headline">Platforms</a></li>
-                            <li><a routerLink="/medias" class="inline-block w-full hover:bg-gray-200 px-4 py-1" i18n="@@media.list.headline">Medias</a></li>
-                            <li><a routerLink="/mediaArtists" class="inline-block w-full hover:bg-gray-200 px-4 py-1" i18n="@@mediaArtist.list.headline">Media Artists</a></li>
-                            <li><a routerLink="/collections" class="inline-block w-full hover:bg-gray-200 px-4 py-1" i18n="@@collection.list.headline">Collections</a></li>
-                            <li><a routerLink="/mediaCollections" class="inline-block w-full hover:bg-gray-200 px-4 py-1" i18n="@@mediaCollection.list.headline">Media Collections</a></li>
-                            <li><a routerLink="/tags" class="inline-block w-full hover:bg-gray-200 px-4 py-1" i18n="@@tag.list.headline">Tags</a></li>
-                            <li><a routerLink="/reviews" class="inline-block w-full hover:bg-gray-200 px-4 py-1" i18n="@@review.list.headline">Reviews</a></li>
-                            <li><a routerLink="/flags" class="inline-block w-full hover:bg-gray-200 px-4 py-1" i18n="@@flag.list.headline">Flags</a></li>
-                            <li><a routerLink="/userMedias" class="inline-block w-full hover:bg-gray-200 px-4 py-1" i18n="@@userMedia.list.headline">User Medias</a></li>
-                        </ul>
-                    </li>
-                </ul>
+<p-menubar [model]="[]" class="!bg-primary !rounded-none !border-0">
+    <ng-template #start>
+        <a routerLink="/" class="flex py-1.5 mr-4">
+            <img ngSrc="logo.png" i18n-alt="@@app.title" alt="Mediatheque" width="30" height="30" class="inline-block" />
+            <span class="text-xl pl-3 text-white hidden sm:block" i18n="@@app.title">Ma médiathèque</span>
+        </a>
+    </ng-template>
+    <ng-template #end>
+        @if (user$ | async; as user) {
+            <div class="flex items-center gap-2">
+                <input type="text" pInputText i18n-placeholder="@@header.search" placeholder="Rechercher" class="w-36" />
+                <a routerLink="/users/edit/{{ user.id }}" class="flex">
+                    <p-avatar [label]="!user.avatar ? user.username?.[0] : '' | uppercase" shape="circle">
+                        <img [src]="user.avatar ? environment.apiPath + '/uploads/' + user.avatar : ''" alt="Photo de profil" i18n-alt="@@header.avatar.alt">
+                    </p-avatar>
+                </a>
+                <button class="flex cursor-pointer" (click)="logout()"><i class="pi pi-sign-out text-white"></i></button>
             </div>
-        </nav>
-    </div>
-</header>
+        }
+    </ng-template>
+</p-menubar>

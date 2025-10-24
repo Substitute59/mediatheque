@@ -28,6 +28,15 @@ public class User {
     @Column
     private String avatar;
 
+    @Column
+    private String refreshToken;
+
+    @Column(name = "reset_token")
+    private String resetToken;
+
+    @Column(name = "reset_token_expiration")
+    private OffsetDateTime resetTokenExpiration;
+
     @Column(name = "\"role\"")
     private String role;
 
@@ -73,6 +82,30 @@ public class User {
 
     public void setAvatar(final String avatar) {
         this.avatar = avatar;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(final String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
+
+    public OffsetDateTime getResetTokenExpiration() {
+        return resetTokenExpiration;
+    }
+
+    public void setResetTokenExpiration(OffsetDateTime resetTokenExpiration) {
+        this.resetTokenExpiration = resetTokenExpiration;
     }
 
     public String getRole() {

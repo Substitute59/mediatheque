@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiPath: ''
+  apiPath: 'https://mediatheque-eb1e.onrender.com'
 };

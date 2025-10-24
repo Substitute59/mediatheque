@@ -10,5 +10,6 @@ export class UserDTO {
   avatar?: string|null;
   role?: string|null;
   createdAt?: string|null;
+  token?: string|null;
 
 }

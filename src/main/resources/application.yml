@@ -17,6 +17,22 @@ spring:
             non_contextual_creation: true
         id:
           new_generator_mappings: true
+  mail:
+    host: bente.o2switch.net
+    port: 587
+    username: dev@fumi2936.odns.fr
+    password: "D2,rs.m;Aw^T"
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl.trust: "*"
+          debug: true
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
 error:
   handling:
     http-status-in-json-response: true
@@ -24,3 +40,8 @@ error:
     full-stacktrace-http-statuses: 5xx
     log-levels:
       5xx: ERROR
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 3600000
+frontend:
+  url: ${FRONTEND_URL}

@@ -3,7 +3,11 @@ package com.mediatheque.mediatheque.rest;
 import com.mediatheque.mediatheque.model.UserDTO;
 import com.mediatheque.mediatheque.service.UserService;
 import jakarta.validation.Valid;
+
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +18,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
@@ -44,10 +50,12 @@ public class UserResource {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Integer> updateUser(@PathVariable(name = "id") final Integer id,
-            @RequestBody @Valid final UserDTO userDTO) {
-        userService.update(id, userDTO);
-        return ResponseEntity.ok(id);
+    public ResponseEntity<?> updateUser(@PathVariable(name = "id") final Integer id,
+        @RequestParam(value = "password", required = false) String password,
+        @RequestParam(value = "avatar", required = false) MultipartFile avatar
+    ) throws IOException {
+        userService.update(id, password, avatar);
+        return ResponseEntity.ok(Map.of("message", "User updated successfully"));
     }
 
     @DeleteMapping("/{id}")
