@@ -44,6 +44,12 @@ public class UserMediaService {
                 .toList();
     }
 
+    public List<UserMediaDTO> findAllByUserId(Integer userId) {
+        return userMediaRepository.findByUserId(userId).stream()
+                .map(userMedia -> mapToDTO(userMedia, new UserMediaDTO()))
+                .toList();
+    }
+
     public UserMediaDTO get(final Integer id) {
         return userMediaRepository.findById(id)
                 .map(userMedia -> mapToDTO(userMedia, new UserMediaDTO()))

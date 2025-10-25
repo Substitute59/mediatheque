@@ -6,18 +6,30 @@ import com.mediatheque.mediatheque.domain.MediaType;
 import com.mediatheque.mediatheque.domain.Platform;
 import com.mediatheque.mediatheque.domain.Tag;
 import com.mediatheque.mediatheque.domain.User;
+import com.mediatheque.mediatheque.domain.UserMedia;
 import com.mediatheque.mediatheque.events.BeforeDeleteGenre;
 import com.mediatheque.mediatheque.events.BeforeDeleteMedia;
 import com.mediatheque.mediatheque.events.BeforeDeleteMediaType;
 import com.mediatheque.mediatheque.events.BeforeDeletePlatform;
 import com.mediatheque.mediatheque.events.BeforeDeleteTag;
 import com.mediatheque.mediatheque.events.BeforeDeleteUser;
+import com.mediatheque.mediatheque.model.ArtistDTO;
+import com.mediatheque.mediatheque.model.CollectionDTO;
+import com.mediatheque.mediatheque.model.CompleteMediaDTO;
+import com.mediatheque.mediatheque.model.FlagDTO;
+import com.mediatheque.mediatheque.model.GenreDTO;
 import com.mediatheque.mediatheque.model.MediaDTO;
+import com.mediatheque.mediatheque.model.MediaTypeDTO;
+import com.mediatheque.mediatheque.model.PlatformDTO;
+import com.mediatheque.mediatheque.model.ReviewDTO;
+import com.mediatheque.mediatheque.model.TagDTO;
+import com.mediatheque.mediatheque.model.UserDTO;
 import com.mediatheque.mediatheque.repos.GenreRepository;
 import com.mediatheque.mediatheque.repos.MediaRepository;
 import com.mediatheque.mediatheque.repos.MediaTypeRepository;
 import com.mediatheque.mediatheque.repos.PlatformRepository;
 import com.mediatheque.mediatheque.repos.TagRepository;
+import com.mediatheque.mediatheque.repos.UserMediaRepository;
 import com.mediatheque.mediatheque.repos.UserRepository;
 import com.mediatheque.mediatheque.util.CustomCollectors;
 import com.mediatheque.mediatheque.util.NotFoundException;
@@ -25,6 +37,7 @@ import com.mediatheque.mediatheque.util.ReferencedException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Sort;
@@ -35,6 +48,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class MediaService {
+
+    private final UserMediaRepository userMediaRepository;
 
     private final MediaRepository mediaRepository;
     private final MediaTypeRepository mediaTypeRepository;
@@ -47,11 +62,13 @@ public class MediaService {
     public MediaService(final MediaRepository mediaRepository,
             final MediaTypeRepository mediaTypeRepository, final GenreRepository genreRepository,
             final PlatformRepository platformRepository, final UserRepository userRepository,
-            final TagRepository tagRepository, final ApplicationEventPublisher publisher) {
+            final TagRepository tagRepository, final ApplicationEventPublisher publisher,
+            final UserMediaRepository userMediaRepository) {
         this.mediaRepository = mediaRepository;
         this.mediaTypeRepository = mediaTypeRepository;
         this.genreRepository = genreRepository;
         this.platformRepository = platformRepository;
+        this.userMediaRepository = userMediaRepository;
         this.userRepository = userRepository;
         this.tagRepository = tagRepository;
         this.publisher = publisher;
@@ -61,6 +78,13 @@ public class MediaService {
         final List<Media> medias = mediaRepository.findAll(Sort.by("id"));
         return medias.stream()
                 .map(media -> mapToDTO(media, new MediaDTO()))
+                .toList();
+    }
+
+    public List<CompleteMediaDTO> findAllByUserId(Integer userId) {
+        final List<UserMedia> userMedias = userMediaRepository.findByUserId(userId);
+        return userMedias.stream()
+                .map(userMedia -> userMediaToCompleteMediaDTO(userMedia))
                 .toList();
     }
 
@@ -105,6 +129,56 @@ public class MediaService {
                 .map(tag -> tag.getId())
                 .toList());
         return mediaDTO;
+    }
+
+    private CompleteMediaDTO userMediaToCompleteMediaDTO(final UserMedia userMedia) {
+        final Media media = userMedia.getMedia();
+        final CompleteMediaDTO completeMediaDTO = new CompleteMediaDTO();
+        completeMediaDTO.setId(media.getId());
+        completeMediaDTO.setTitle(media.getTitle());
+        completeMediaDTO.setDescription(media.getDescription());
+        completeMediaDTO.setCoverUrl(media.getCoverUrl());
+        completeMediaDTO.setCreatedAt(media.getCreatedAt());
+        completeMediaDTO.setUpdatedAt(media.getUpdatedAt());
+        completeMediaDTO.setFlag(new FlagDTO(userMedia.getFlag()));
+        if (media.getMediaType() != null) {
+            completeMediaDTO.setMediaType(new MediaTypeDTO(media.getMediaType()));
+        }
+        if (media.getGenre() != null) {
+            completeMediaDTO.setGenre(new GenreDTO(media.getGenre()));
+        }
+        if (media.getPlatform() != null) {
+            completeMediaDTO.setPlatform(new PlatformDTO(media.getPlatform()));
+        }
+        if (media.getCreatedBy() != null) {
+            completeMediaDTO.setCreatedBy(new UserDTO(media.getCreatedBy()));
+        }
+        if (media.getMediaTagTags() != null) {
+            completeMediaDTO.setMediaTagTags(
+                media.getMediaTagTags().stream()
+                .map(tag -> new TagDTO(tag))
+                .toList());
+        }
+        if (media.getMediaMediaArtists() != null) {
+            completeMediaDTO.setMediaMediaArtists(
+                media.getMediaMediaArtists().stream()
+                .map(artist -> new ArtistDTO(artist.getArtist()))
+                .toList());
+        }
+        if (media.getMediaMediaCollections() != null) {
+            completeMediaDTO.setMediaMediaCollections(
+                media.getMediaMediaCollections().stream()
+                .map(collection -> new CollectionDTO(collection.getCollection()))
+                .toList());
+        }
+        if (media.getMediaReviews() != null) {
+            completeMediaDTO.setMediaReviews(
+                media.getMediaReviews().stream()
+                .map(review -> new ReviewDTO(review))
+                .filter(review -> review.getUser() == userMedia.getUser().getId())
+                .toList());
+        }
+        return completeMediaDTO;
     }
 
     private Media mapToEntity(final MediaDTO mediaDTO, final Media media) {

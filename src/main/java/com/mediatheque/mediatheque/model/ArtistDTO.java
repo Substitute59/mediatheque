@@ -1,5 +1,7 @@
 package com.mediatheque.mediatheque.model;
 
+import com.mediatheque.mediatheque.domain.Artist;
+
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -14,6 +16,14 @@ public class ArtistDTO {
 
     @Size(max = 255)
     private String type;
+
+    public ArtistDTO() {}
+
+    public ArtistDTO(Artist artist) {
+        this.id = artist.getId();
+        this.name = artist.getName();
+        this.type = artist.getType();
+    }
 
     public Integer getId() {
         return id;

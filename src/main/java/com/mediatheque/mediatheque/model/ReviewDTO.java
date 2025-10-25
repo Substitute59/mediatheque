@@ -3,6 +3,8 @@ package com.mediatheque.mediatheque.model;
 import jakarta.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 
+import com.mediatheque.mediatheque.domain.Review;
+
 
 public class ReviewDTO {
 
@@ -20,6 +22,16 @@ public class ReviewDTO {
 
     @NotNull
     private Integer user;
+
+    public ReviewDTO() {}
+
+    public ReviewDTO(Review review) {
+        this.id = review.getId();
+        this.rating = review.getRating();
+        this.comment = review.getComment();
+        this.createdAt = review.getCreatedAt();
+        this.user = review.getUser().getId();
+    }
 
     public Integer getId() {
         return id;

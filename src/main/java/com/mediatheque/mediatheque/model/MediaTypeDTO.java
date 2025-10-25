@@ -1,5 +1,7 @@
 package com.mediatheque.mediatheque.model;
 
+import com.mediatheque.mediatheque.domain.MediaType;
+
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -11,6 +13,13 @@ public class MediaTypeDTO {
     @NotNull
     @Size(max = 100)
     private String name;
+
+    public MediaTypeDTO() {}
+
+    public MediaTypeDTO(MediaType mediaType) {
+        this.id = mediaType.getId();
+        this.name = mediaType.getName();
+    }
 
     public Integer getId() {
         return id;

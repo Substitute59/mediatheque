@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { ErrorHandler } from 'app/common/error-handler.injectable';
 import { MediaService } from 'app/media/media.service';
 import { MediaDTO } from 'app/media/media.model';
+import { AuthService } from '../auth/auth.service';
 
 
 @Component({
@@ -14,6 +15,7 @@ import { MediaDTO } from 'app/media/media.model';
 export class MediaListComponent implements OnInit, OnDestroy {
 
   mediaService = inject(MediaService);
+  auth = inject(AuthService);
   errorHandler = inject(ErrorHandler);
   router = inject(Router);
   medias?: MediaDTO[];
@@ -45,7 +47,7 @@ export class MediaListComponent implements OnInit, OnDestroy {
   }
   
   loadData() {
-    this.mediaService.getAllMedias()
+    this.mediaService.getAllMedias(this.auth.currentUserValue?.id!)
         .subscribe({
           next: (data) => this.medias = data,
           error: (error) => this.errorHandler.handleServerError(error.error)

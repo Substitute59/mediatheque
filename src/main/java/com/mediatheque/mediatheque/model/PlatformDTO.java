@@ -1,5 +1,7 @@
 package com.mediatheque.mediatheque.model;
 
+import com.mediatheque.mediatheque.domain.Platform;
+
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -11,6 +13,13 @@ public class PlatformDTO {
     @NotNull
     @Size(max = 100)
     private String name;
+
+    public PlatformDTO() {}
+
+    public PlatformDTO(Platform platform) {
+        this.id = platform.getId();
+        this.name = platform.getName();
+    }
 
     public Integer getId() {
         return id;

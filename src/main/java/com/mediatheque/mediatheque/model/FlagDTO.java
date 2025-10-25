@@ -1,5 +1,7 @@
 package com.mediatheque.mediatheque.model;
 
+import com.mediatheque.mediatheque.domain.Flag;
+
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -14,6 +16,14 @@ public class FlagDTO {
 
     @Size(max = 50)
     private String color;
+
+    public FlagDTO() {}
+
+    public FlagDTO(Flag flag) {
+        this.id = flag.getId();
+        this.name = flag.getName();
+        this.color = flag.getColor();
+    }
 
     public Integer getId() {
         return id;

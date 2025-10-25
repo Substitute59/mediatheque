@@ -14,8 +14,9 @@ export class MediaService {
   http = inject(HttpClient);
   resourcePath = environment.apiPath + '/api/medias';
 
-  getAllMedias() {
-    return this.http.get<MediaDTO[]>(this.resourcePath);
+  getAllMedias(userId: number = 0) {
+    const url = userId === 0 ? this.resourcePath : this.resourcePath + '?userId=' + userId;
+    return this.http.get<MediaDTO[]>(url);
   }
 
   getMedia(id: number) {

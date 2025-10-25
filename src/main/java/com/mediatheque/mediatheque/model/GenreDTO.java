@@ -1,5 +1,7 @@
 package com.mediatheque.mediatheque.model;
 
+import com.mediatheque.mediatheque.domain.Genre;
+
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -14,6 +16,13 @@ public class GenreDTO {
 
     @NotNull
     private Integer mediaType;
+
+    public GenreDTO() {}
+
+    public GenreDTO(Genre genre) {
+        this.id = genre.getId();
+        this.name = genre.getName();
+    }
 
     public Integer getId() {
         return id;

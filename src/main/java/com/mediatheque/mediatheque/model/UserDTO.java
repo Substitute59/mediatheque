@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.OffsetDateTime;
 
+import com.mediatheque.mediatheque.domain.User;
+
 
 public class UserDTO {
 
@@ -27,6 +29,14 @@ public class UserDTO {
     private String role;
 
     private OffsetDateTime createdAt;
+
+    public UserDTO() {}
+
+    public UserDTO(User user) {
+        this.id = user.getId();
+        this.username = user.getUsername();
+        this.avatar = user.getAvatar();
+    }
 
     public Integer getId() {
         return id;

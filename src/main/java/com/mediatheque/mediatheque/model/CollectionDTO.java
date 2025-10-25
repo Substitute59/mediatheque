@@ -1,5 +1,7 @@
 package com.mediatheque.mediatheque.model;
 
+import com.mediatheque.mediatheque.domain.Collection;
+
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -11,6 +13,13 @@ public class CollectionDTO {
     @NotNull
     @Size(max = 200)
     private String name;
+
+    public CollectionDTO() {}
+
+    public CollectionDTO(Collection collection) {
+        this.id = collection.getId();
+        this.name = collection.getName();
+    }
 
     public Integer getId() {
         return id;

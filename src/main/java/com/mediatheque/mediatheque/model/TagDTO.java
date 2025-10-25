@@ -1,5 +1,7 @@
 package com.mediatheque.mediatheque.model;
 
+import com.mediatheque.mediatheque.domain.Tag;
+
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -11,6 +13,13 @@ public class TagDTO {
     @NotNull
     @Size(max = 100)
     private String name;
+
+    public TagDTO() {}
+
+    public TagDTO(Tag tag) {
+        this.id = tag.getId();
+        this.name = tag.getName();
+    }
 
     public Integer getId() {
         return id;

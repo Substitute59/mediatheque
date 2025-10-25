@@ -10,10 +10,30 @@ export class MediaDTO {
   coverUrl?: string|null;
   createdAt?: string|null;
   updatedAt?: string|null;
-  mediaType?: number|null;
-  genre?: number|null;
-  platform?: number|null;
-  createdBy?: number|null;
-  mediaTagTags?: number[]|null;
+  mediaType?: {
+    id?: number|null;
+    name?: string|null;
+  }|null;
+  genre?: {
+    id?: number|null;
+    name?: string|null;
+  }|null;
+  platform?: {
+    id?: number|null;
+    name?: string|null;
+  }|null;
+  createdBy?: {
+    id?: number|null;
+    username?: string|null;
+    password?: string|null;
+    avatar?: string|null;
+    role?: string|null;
+    createdAt?: string|null;
+    token?: string|null;
+  }|null;
+  mediaTagTags?: {
+    id?: number|null;
+    name?: string|null;
+  }[]|null;
 
 }
