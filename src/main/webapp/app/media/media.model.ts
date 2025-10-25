@@ -13,7 +13,6 @@ export class MediaDTO {
   mediaType?: number|null;
   genre?: number|null;
   platform?: number|null;
-  flag?: number|null;
   createdBy?: number|null;
   mediaTagTags?: number[]|null;
 

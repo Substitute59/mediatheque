@@ -66,7 +66,6 @@ public class MediaArtistService {
     private MediaArtistDTO mapToDTO(final MediaArtist mediaArtist,
             final MediaArtistDTO mediaArtistDTO) {
         mediaArtistDTO.setId(mediaArtist.getId());
-        mediaArtistDTO.setRole(mediaArtist.getRole());
         mediaArtistDTO.setMedia(mediaArtist.getMedia() == null ? null : mediaArtist.getMedia().getId());
         mediaArtistDTO.setArtist(mediaArtist.getArtist() == null ? null : mediaArtist.getArtist().getId());
         return mediaArtistDTO;
@@ -74,7 +73,6 @@ public class MediaArtistService {
 
     private MediaArtist mapToEntity(final MediaArtistDTO mediaArtistDTO,
             final MediaArtist mediaArtist) {
-        mediaArtist.setRole(mediaArtistDTO.getRole());
         final Media media = mediaArtistDTO.getMedia() == null ? null : mediaRepository.findById(mediaArtistDTO.getMedia())
                 .orElseThrow(() -> new NotFoundException("media not found"));
         mediaArtist.setMedia(media);

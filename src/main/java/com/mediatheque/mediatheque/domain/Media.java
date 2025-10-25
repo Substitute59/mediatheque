@@ -52,10 +52,6 @@ public class Media {
     private Platform platform;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "flag_id")
-    private Flag flag;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_id")
     private User createdBy;
 
@@ -149,14 +145,6 @@ public class Media {
 
     public void setPlatform(final Platform platform) {
         this.platform = platform;
-    }
-
-    public Flag getFlag() {
-        return flag;
-    }
-
-    public void setFlag(final Flag flag) {
-        this.flag = flag;
     }
 
     public User getCreatedBy() {

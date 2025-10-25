@@ -71,7 +71,6 @@ public class UserMediaService {
 
     private UserMediaDTO mapToDTO(final UserMedia userMedia, final UserMediaDTO userMediaDTO) {
         userMediaDTO.setId(userMedia.getId());
-        userMediaDTO.setPersonalNotes(userMedia.getPersonalNotes());
         userMediaDTO.setUser(userMedia.getUser() == null ? null : userMedia.getUser().getId());
         userMediaDTO.setMedia(userMedia.getMedia() == null ? null : userMedia.getMedia().getId());
         userMediaDTO.setFlag(userMedia.getFlag() == null ? null : userMedia.getFlag().getId());
@@ -79,7 +78,6 @@ public class UserMediaService {
     }
 
     private UserMedia mapToEntity(final UserMediaDTO userMediaDTO, final UserMedia userMedia) {
-        userMedia.setPersonalNotes(userMediaDTO.getPersonalNotes());
         final User user = userMediaDTO.getUser() == null ? null : userRepository.findById(userMediaDTO.getUser())
                 .orElseThrow(() -> new NotFoundException("user not found"));
         userMedia.setUser(user);

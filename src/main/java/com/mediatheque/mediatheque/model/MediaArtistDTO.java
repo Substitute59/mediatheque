@@ -8,9 +8,6 @@ public class MediaArtistDTO {
 
     private Integer id;
 
-    @Size(max = 100)
-    private String role;
-
     @NotNull
     private Integer media;
 
@@ -23,14 +20,6 @@ public class MediaArtistDTO {
 
     public void setId(final Integer id) {
         this.id = id;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(final String role) {
-        this.role = role;
     }
 
     public Integer getMedia() {

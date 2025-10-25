@@ -21,9 +21,6 @@ public class Collection {
     @Column(nullable = false, length = 200)
     private String name;
 
-    @Column(columnDefinition = "longtext", name = "\"description\"")
-    private String description;
-
     @OneToMany(mappedBy = "collection")
     private Set<MediaCollection> collectionMediaCollections = new HashSet<>();
 
@@ -41,14 +38,6 @@ public class Collection {
 
     public void setName(final String name) {
         this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(final String description) {
-        this.description = description;
     }
 
     public Set<MediaCollection> getCollectionMediaCollections() {

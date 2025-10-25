@@ -30,8 +30,6 @@ public class MediaDTO {
 
     private Integer platform;
 
-    private Integer flag;
-
     private Integer createdBy;
 
     private List<Integer> mediaTagTags;
@@ -106,14 +104,6 @@ public class MediaDTO {
 
     public void setPlatform(final Integer platform) {
         this.platform = platform;
-    }
-
-    public Integer getFlag() {
-        return flag;
-    }
-
-    public void setFlag(final Integer flag) {
-        this.flag = flag;
     }
 
     public Integer getCreatedBy() {

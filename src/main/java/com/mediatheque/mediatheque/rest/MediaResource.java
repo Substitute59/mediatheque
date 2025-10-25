@@ -1,7 +1,6 @@
 package com.mediatheque.mediatheque.rest;
 
 import com.mediatheque.mediatheque.model.MediaDTO;
-import com.mediatheque.mediatheque.service.FlagService;
 import com.mediatheque.mediatheque.service.GenreService;
 import com.mediatheque.mediatheque.service.MediaService;
 import com.mediatheque.mediatheque.service.MediaTypeService;
@@ -32,19 +31,16 @@ public class MediaResource {
     private final MediaTypeService mediaTypeService;
     private final GenreService genreService;
     private final PlatformService platformService;
-    private final FlagService flagService;
     private final UserService userService;
     private final TagService tagService;
 
     public MediaResource(final MediaService mediaService, final MediaTypeService mediaTypeService,
             final GenreService genreService, final PlatformService platformService,
-            final FlagService flagService, final UserService userService,
-            final TagService tagService) {
+            final UserService userService, final TagService tagService) {
         this.mediaService = mediaService;
         this.mediaTypeService = mediaTypeService;
         this.genreService = genreService;
         this.platformService = platformService;
-        this.flagService = flagService;
         this.userService = userService;
         this.tagService = tagService;
     }
@@ -91,11 +87,6 @@ public class MediaResource {
     @GetMapping("/platformValues")
     public ResponseEntity<Map<Integer, String>> getPlatformValues() {
         return ResponseEntity.ok(platformService.getPlatformValues());
-    }
-
-    @GetMapping("/flagValues")
-    public ResponseEntity<Map<Integer, String>> getFlagValues() {
-        return ResponseEntity.ok(flagService.getFlagValues());
     }
 
     @GetMapping("/createdByValues")

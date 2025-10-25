@@ -20,8 +20,7 @@ export class CollectionAddComponent {
   errorHandler = inject(ErrorHandler);
 
   addForm = new FormGroup({
-    name: new FormControl(null, [Validators.required, Validators.maxLength(200)]),
-    description: new FormControl(null)
+    name: new FormControl(null, [Validators.required, Validators.maxLength(200)])
   }, { updateOn: 'submit' });
 
   getMessage(key: string, details?: any) {

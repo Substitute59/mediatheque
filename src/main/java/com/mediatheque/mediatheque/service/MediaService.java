@@ -1,13 +1,11 @@
 package com.mediatheque.mediatheque.service;
 
-import com.mediatheque.mediatheque.domain.Flag;
 import com.mediatheque.mediatheque.domain.Genre;
 import com.mediatheque.mediatheque.domain.Media;
 import com.mediatheque.mediatheque.domain.MediaType;
 import com.mediatheque.mediatheque.domain.Platform;
 import com.mediatheque.mediatheque.domain.Tag;
 import com.mediatheque.mediatheque.domain.User;
-import com.mediatheque.mediatheque.events.BeforeDeleteFlag;
 import com.mediatheque.mediatheque.events.BeforeDeleteGenre;
 import com.mediatheque.mediatheque.events.BeforeDeleteMedia;
 import com.mediatheque.mediatheque.events.BeforeDeleteMediaType;
@@ -15,7 +13,6 @@ import com.mediatheque.mediatheque.events.BeforeDeletePlatform;
 import com.mediatheque.mediatheque.events.BeforeDeleteTag;
 import com.mediatheque.mediatheque.events.BeforeDeleteUser;
 import com.mediatheque.mediatheque.model.MediaDTO;
-import com.mediatheque.mediatheque.repos.FlagRepository;
 import com.mediatheque.mediatheque.repos.GenreRepository;
 import com.mediatheque.mediatheque.repos.MediaRepository;
 import com.mediatheque.mediatheque.repos.MediaTypeRepository;
@@ -43,21 +40,18 @@ public class MediaService {
     private final MediaTypeRepository mediaTypeRepository;
     private final GenreRepository genreRepository;
     private final PlatformRepository platformRepository;
-    private final FlagRepository flagRepository;
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     private final ApplicationEventPublisher publisher;
 
     public MediaService(final MediaRepository mediaRepository,
             final MediaTypeRepository mediaTypeRepository, final GenreRepository genreRepository,
-            final PlatformRepository platformRepository, final FlagRepository flagRepository,
-            final UserRepository userRepository, final TagRepository tagRepository,
-            final ApplicationEventPublisher publisher) {
+            final PlatformRepository platformRepository, final UserRepository userRepository,
+            final TagRepository tagRepository, final ApplicationEventPublisher publisher) {
         this.mediaRepository = mediaRepository;
         this.mediaTypeRepository = mediaTypeRepository;
         this.genreRepository = genreRepository;
         this.platformRepository = platformRepository;
-        this.flagRepository = flagRepository;
         this.userRepository = userRepository;
         this.tagRepository = tagRepository;
         this.publisher = publisher;
@@ -106,7 +100,6 @@ public class MediaService {
         mediaDTO.setMediaType(media.getMediaType() == null ? null : media.getMediaType().getId());
         mediaDTO.setGenre(media.getGenre() == null ? null : media.getGenre().getId());
         mediaDTO.setPlatform(media.getPlatform() == null ? null : media.getPlatform().getId());
-        mediaDTO.setFlag(media.getFlag() == null ? null : media.getFlag().getId());
         mediaDTO.setCreatedBy(media.getCreatedBy() == null ? null : media.getCreatedBy().getId());
         mediaDTO.setMediaTagTags(media.getMediaTagTags().stream()
                 .map(tag -> tag.getId())
@@ -129,9 +122,6 @@ public class MediaService {
         final Platform platform = mediaDTO.getPlatform() == null ? null : platformRepository.findById(mediaDTO.getPlatform())
                 .orElseThrow(() -> new NotFoundException("platform not found"));
         media.setPlatform(platform);
-        final Flag flag = mediaDTO.getFlag() == null ? null : flagRepository.findById(mediaDTO.getFlag())
-                .orElseThrow(() -> new NotFoundException("flag not found"));
-        media.setFlag(flag);
         final User createdBy = mediaDTO.getCreatedBy() == null ? null : userRepository.findById(mediaDTO.getCreatedBy())
                 .orElseThrow(() -> new NotFoundException("createdBy not found"));
         media.setCreatedBy(createdBy);
@@ -179,17 +169,6 @@ public class MediaService {
         if (platformMedia != null) {
             referencedException.setKey("platform.media.platform.referenced");
             referencedException.addParam(platformMedia.getId());
-            throw referencedException;
-        }
-    }
-
-    @EventListener(BeforeDeleteFlag.class)
-    public void on(final BeforeDeleteFlag event) {
-        final ReferencedException referencedException = new ReferencedException();
-        final Media flagMedia = mediaRepository.findFirstByFlagId(event.getId());
-        if (flagMedia != null) {
-            referencedException.setKey("flag.media.flag.referenced");
-            referencedException.addParam(flagMedia.getId());
             throw referencedException;
         }
     }

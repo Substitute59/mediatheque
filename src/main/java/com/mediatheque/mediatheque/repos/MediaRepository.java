@@ -13,8 +13,6 @@ public interface MediaRepository extends JpaRepository<Media, Integer> {
 
     Media findFirstByPlatformId(Integer id);
 
-    Media findFirstByFlagId(Integer id);
-
     Media findFirstByCreatedById(Integer id);
 
     List<Media> findAllByMediaTagTagsId(Integer id);

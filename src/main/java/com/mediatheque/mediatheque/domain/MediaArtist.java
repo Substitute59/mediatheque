@@ -18,9 +18,6 @@ public class MediaArtist {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(length = 100, name = "\"role\"")
-    private String role;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "media_id", nullable = false)
     private Media media;
@@ -35,14 +32,6 @@ public class MediaArtist {
 
     public void setId(final Integer id) {
         this.id = id;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(final String role) {
-        this.role = role;
     }
 
     public Media getMedia() {

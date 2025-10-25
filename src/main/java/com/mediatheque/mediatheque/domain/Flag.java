@@ -25,9 +25,6 @@ public class Flag {
     private String color;
 
     @OneToMany(mappedBy = "flag")
-    private Set<Media> flagMedias = new HashSet<>();
-
-    @OneToMany(mappedBy = "flag")
     private Set<UserMedia> flagUserMedias = new HashSet<>();
 
     public Integer getId() {
@@ -52,14 +49,6 @@ public class Flag {
 
     public void setColor(final String color) {
         this.color = color;
-    }
-
-    public Set<Media> getFlagMedias() {
-        return flagMedias;
-    }
-
-    public void setFlagMedias(final Set<Media> flagMedias) {
-        this.flagMedias = flagMedias;
     }
 
     public Set<UserMedia> getFlagUserMedias() {

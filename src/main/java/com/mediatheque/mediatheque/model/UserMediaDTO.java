@@ -7,8 +7,6 @@ public class UserMediaDTO {
 
     private Integer id;
 
-    private String personalNotes;
-
     @NotNull
     private Integer user;
 
@@ -23,14 +21,6 @@ public class UserMediaDTO {
 
     public void setId(final Integer id) {
         this.id = id;
-    }
-
-    public String getPersonalNotes() {
-        return personalNotes;
-    }
-
-    public void setPersonalNotes(final String personalNotes) {
-        this.personalNotes = personalNotes;
     }
 
     public Integer getUser() {

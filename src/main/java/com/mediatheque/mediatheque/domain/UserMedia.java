@@ -18,9 +18,6 @@ public class UserMedia {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(columnDefinition = "longtext")
-    private String personalNotes;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -39,14 +36,6 @@ public class UserMedia {
 
     public void setId(final Integer id) {
         this.id = id;
-    }
-
-    public String getPersonalNotes() {
-        return personalNotes;
-    }
-
-    public void setPersonalNotes(final String personalNotes) {
-        this.personalNotes = personalNotes;
     }
 
     public User getUser() {

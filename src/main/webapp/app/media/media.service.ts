@@ -49,11 +49,6 @@ export class MediaService {
         .pipe(map(transformRecordToMap));
   }
 
-  getFlagValues() {
-    return this.http.get<Record<string, string>>(this.resourcePath + '/flagValues')
-        .pipe(map(transformRecordToMap));
-  }
-
   getCreatedByValues() {
     return this.http.get<Record<string, string>>(this.resourcePath + '/createdByValues')
         .pipe(map(transformRecordToMap));

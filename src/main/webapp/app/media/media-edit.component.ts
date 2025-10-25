@@ -24,7 +24,6 @@ export class MediaEditComponent implements OnInit {
   mediaTypeValues?: Map<number,string>;
   genreValues?: Map<number,string>;
   platformValues?: Map<number,string>;
-  flagValues?: Map<number,string>;
   createdByValues?: Map<number,string>;
   mediaTagTagsValues?: Map<number,string>;
   currentId?: number;
@@ -39,7 +38,6 @@ export class MediaEditComponent implements OnInit {
     mediaType: new FormControl(null, [Validators.required]),
     genre: new FormControl(null),
     platform: new FormControl(null),
-    flag: new FormControl(null),
     createdBy: new FormControl(null),
     mediaTagTags: new FormControl([])
   }, { updateOn: 'submit' });
@@ -66,11 +64,6 @@ export class MediaEditComponent implements OnInit {
     this.mediaService.getPlatformValues()
         .subscribe({
           next: (data) => this.platformValues = data,
-          error: (error) => this.errorHandler.handleServerError(error.error)
-        });
-    this.mediaService.getFlagValues()
-        .subscribe({
-          next: (data) => this.flagValues = data,
           error: (error) => this.errorHandler.handleServerError(error.error)
         });
     this.mediaService.getCreatedByValues()

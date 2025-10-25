@@ -61,13 +61,11 @@ public class CollectionService {
     private CollectionDTO mapToDTO(final Collection collection, final CollectionDTO collectionDTO) {
         collectionDTO.setId(collection.getId());
         collectionDTO.setName(collection.getName());
-        collectionDTO.setDescription(collection.getDescription());
         return collectionDTO;
     }
 
     private Collection mapToEntity(final CollectionDTO collectionDTO, final Collection collection) {
         collection.setName(collectionDTO.getName());
-        collection.setDescription(collectionDTO.getDescription());
         return collection;
     }
 
