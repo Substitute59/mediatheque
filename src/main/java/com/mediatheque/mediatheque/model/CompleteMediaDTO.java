@@ -23,6 +23,8 @@ public class CompleteMediaDTO {
 
     private OffsetDateTime updatedAt;
 
+    private OffsetDateTime addedDate;
+
     private FlagDTO flag;
 
     private MediaTypeDTO mediaType;
@@ -87,6 +89,14 @@ public class CompleteMediaDTO {
 
     public void setUpdatedAt(final OffsetDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public OffsetDateTime getAddedDate() {
+        return addedDate;
+    }
+
+    public void setAddedDate(final OffsetDateTime addedDate) {
+        this.addedDate = addedDate;
     }
 
     public FlagDTO getFlag() {

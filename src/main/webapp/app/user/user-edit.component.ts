@@ -10,7 +10,7 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { UserService } from './user.service';
 import { AuthService } from '../auth/auth.service';
-import { UserSchema } from './user.schema';
+import { UserEditSchema } from './user.schema';
 import { environment } from 'environments/environment';
 import { take } from 'rxjs/operators';
 
@@ -74,7 +74,7 @@ export class UserEditComponent {
   }
 
   userEdit() {
-    const result = UserSchema.safeParse(this.userEditForm.value);
+    const result = UserEditSchema.safeParse(this.userEditForm.value);
 
     if (!result.success) {
       this.errorField = result.error.issues[0].path[0];

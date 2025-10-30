@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { FileUploadModule } from 'primeng/fileupload';
 import { AuthService } from '../auth.service';
-import { UserSchema } from '../../user/user.schema';
+import { RegisterSchema } from '../../user/user.schema';
 
 interface UploadEvent {
   originalEvent: Event;
@@ -21,6 +22,7 @@ interface UploadEvent {
     RouterLink,
     ReactiveFormsModule,
     ButtonModule,
+    CardModule,
     CheckboxModule,
     InputTextModule,
     FileUploadModule
@@ -52,7 +54,7 @@ export class RegisterComponent {
   }
 
   register() {
-    const result = UserSchema.safeParse(this.registerForm.value);
+    const result = RegisterSchema.safeParse(this.registerForm.value);
 
     if (!result.success) {
       this.errorField = result.error.issues[0].path[0];

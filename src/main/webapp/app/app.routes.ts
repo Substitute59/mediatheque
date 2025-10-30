@@ -3,8 +3,6 @@ import { authGuard } from './auth/auth.guard';
 import { HomeComponent } from './home/home.component';
 import { UserEditComponent } from './user/user-edit.component';
 import { MediaTypeListComponent } from './media-type/media-type-list.component';
-import { MediaTypeAddComponent } from './media-type/media-type-add.component';
-import { MediaTypeEditComponent } from './media-type/media-type-edit.component';
 import { GenreListComponent } from './genre/genre-list.component';
 import { GenreAddComponent } from './genre/genre-add.component';
 import { GenreEditComponent } from './genre/genre-edit.component';
@@ -61,18 +59,6 @@ export const routes: Routes = [
     component: MediaTypeListComponent,
     canActivate: [authGuard],
     title: $localize`:@@mediaType.list.headline:Media Types`
-  },
-  {
-    path: 'mediaTypes/add',
-    component: MediaTypeAddComponent,
-    canActivate: [authGuard],
-    title: $localize`:@@mediaType.add.headline:Add Media Type`
-  },
-  {
-    path: 'mediaTypes/edit/:id',
-    component: MediaTypeEditComponent,
-    canActivate: [authGuard],
-    title: $localize`:@@mediaType.edit.headline:Edit Media Type`
   },
   {
     path: 'genres',

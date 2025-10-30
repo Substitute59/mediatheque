@@ -1,5 +1,7 @@
 package com.mediatheque.mediatheque.domain;
 
+import java.time.OffsetDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -29,6 +31,9 @@ public class UserMedia {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "flag_id")
     private Flag flag;
+
+    @Column
+    private OffsetDateTime addedDate;
 
     public Integer getId() {
         return id;
@@ -60,6 +65,14 @@ public class UserMedia {
 
     public void setFlag(final Flag flag) {
         this.flag = flag;
+    }
+
+    public OffsetDateTime getAddedDate() {
+        return addedDate;
+    }
+
+    public void setAddedDate(final OffsetDateTime addedDate) {
+        this.addedDate = addedDate;
     }
 
 }

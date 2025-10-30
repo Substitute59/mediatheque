@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { AuthService } from '../auth.service';
-import { UserSchema } from '../../user/user.schema';
+import { LoginSchema } from '../../user/user.schema';
 
 @Component({
   selector: 'app-login',
@@ -15,6 +16,7 @@ import { UserSchema } from '../../user/user.schema';
     RouterLink,
     ReactiveFormsModule,
     ButtonModule,
+    CardModule,
     CheckboxModule,
     InputTextModule
   ],
@@ -33,7 +35,7 @@ export class LoginComponent {
   }
 
   login() {
-    const result = UserSchema.safeParse(this.loginForm.value);
+    const result = LoginSchema.safeParse(this.loginForm.value);
     if(!result.success) {
       this.errorField = result.error.issues[0].path[0];
       const message = result.error.issues[0].message;

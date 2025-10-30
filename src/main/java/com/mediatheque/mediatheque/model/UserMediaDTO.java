@@ -1,5 +1,7 @@
 package com.mediatheque.mediatheque.model;
 
+import java.time.OffsetDateTime;
+
 import jakarta.validation.constraints.NotNull;
 
 
@@ -14,6 +16,8 @@ public class UserMediaDTO {
     private Integer media;
 
     private Integer flag;
+
+    private OffsetDateTime addedDate;
 
     public Integer getId() {
         return id;
@@ -45,6 +49,14 @@ public class UserMediaDTO {
 
     public void setFlag(final Integer flag) {
         this.flag = flag;
+    }
+
+    public OffsetDateTime getAddedDate() {
+        return addedDate;
+    }
+
+    public void setAddedDate(final OffsetDateTime addedDate) {
+        this.addedDate = addedDate;
     }
 
 }

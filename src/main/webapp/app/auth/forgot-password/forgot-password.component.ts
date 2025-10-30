@@ -3,16 +3,13 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../auth.service';
-import { z } from 'zod';
-
-const ForgotPasswordSchema = z.object({
-  username: z.string().email('Votre email n\'est pas valide')
-});
+import { ForgotPasswordSchema } from '../../user/user.schema';
 
 @Component({
   selector: 'app-forgot-password',
@@ -20,6 +17,7 @@ const ForgotPasswordSchema = z.object({
     CommonModule,
     ReactiveFormsModule,
     ButtonModule,
+    CardModule,
     CheckboxModule,
     InputTextModule,
     ToastModule

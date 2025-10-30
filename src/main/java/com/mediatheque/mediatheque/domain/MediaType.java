@@ -21,6 +21,9 @@ public class MediaType {
     @Column(nullable = false, length = 100)
     private String name;
 
+    @Column(nullable = false, length = 100)
+    private String icon;
+
     @OneToMany(mappedBy = "mediaType")
     private Set<Genre> mediaTypeGenres = new HashSet<>();
 
@@ -41,6 +44,14 @@ public class MediaType {
 
     public void setName(final String name) {
         this.name = name;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(final String icon) {
+        this.icon = icon;
     }
 
     public Set<Genre> getMediaTypeGenres() {

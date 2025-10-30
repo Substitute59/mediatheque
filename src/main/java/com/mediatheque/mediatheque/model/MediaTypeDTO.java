@@ -14,11 +14,18 @@ public class MediaTypeDTO {
     @Size(max = 100)
     private String name;
 
+    @NotNull
+    @Size(max = 100)
+    private String icon;
+
+    private Integer numberOfMedias;
+
     public MediaTypeDTO() {}
 
     public MediaTypeDTO(MediaType mediaType) {
         this.id = mediaType.getId();
         this.name = mediaType.getName();
+        this.icon = mediaType.getIcon();
     }
 
     public Integer getId() {
@@ -35,6 +42,22 @@ public class MediaTypeDTO {
 
     public void setName(final String name) {
         this.name = name;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(final String icon) {
+        this.icon = icon;
+    }
+
+    public Integer getNumberOfMedias() {
+        return numberOfMedias;
+    }
+
+    public void setNumberOfMedias(final Integer numberOfMedias) {
+        this.numberOfMedias = numberOfMedias;
     }
 
 }

@@ -6,5 +6,7 @@ export class MediaTypeDTO {
 
   id?: number|null;
   name?: string|null;
+  icon?: string|null;
+  numberOfMedias?: number|null;
 
 }

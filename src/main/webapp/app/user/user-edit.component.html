@@ -20,16 +20,38 @@
                 </div>
                 <div class="flex flex-col gap-2 w-full">
                     <label for="avatar" class="text-surface-900 dark:text-surface-0 font-medium leading-normal" i18n="@@user.edit.form.avatar">Avatar</label>
+                    <img class="w-50" [src]="user.avatar ? environment.apiPath + '/uploads/' + user.avatar : ''" alt="Photo de profil" i18n-alt="@@user.edit.form.avatar.alt">
                     <p-fileupload
-                        mode="basic"
+                        #uploader
+                        mode="advanced"
                         name="avatar"
                         accept="image/*"
                         maxFileSize="5000000"
                         (onSelect)="onFileSelect($event)"
                         chooseIcon="pi pi-upload"
                         auto="false"
-                    />
-                    <img class="w-50" [src]="user.avatar ? environment.apiPath + '/uploads/' + user.avatar : ''" alt="Photo de profil" i18n-alt="@@user.edit.form.avatar.alt">
+                        customUpload="true"
+                        showUploadButton="false"
+                        showCancelButton="false"
+                        chooseLabel="Choisir un fichier"
+                        i18n-chooseLabel="@@register.form.avatar.choose"
+                        invalidFileSizeMessageSummary="{0} : Le fichier est trop volumineux."
+                        i18n-invalidFileSizeMessageSummary="@@register.form.avatar.size.error"
+                        invalidFileSizeMessageDetail="La taille maximale autorisée est de {0}."
+                        i18n-invalidFileSizeMessageDetail="@@register.form.avatar.size.detail.error"
+                        invalidFileTypeMessageSummary="{0} : Type de fichier non valide."
+                        i18n-invalidFileTypeMessageSummary="@@register.form.avatar.type.error"
+                        invalidFileTypeMessageDetail="Seuls les fichiers de type {0} sont autorisés."
+                        i18n-invalidFileTypeMessageDetail="@@register.form.avatar.type.detail.error"
+                    >
+                        <ng-template pTemplate="content">
+                            @if (!uploader.files.length) {
+                                <div i18n="@@register.form.avatar.no.file">Aucun fichier sélectionné</div>
+                            } @else {
+                                <div *ngFor="let file of uploader.files">{{ file.name }}</div>
+                            }
+                        </ng-template>
+                    </p-fileupload>
                 </div>
             </div>
         }

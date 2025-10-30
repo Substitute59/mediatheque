@@ -80,6 +80,7 @@ public class UserMediaService {
         userMediaDTO.setUser(userMedia.getUser() == null ? null : userMedia.getUser().getId());
         userMediaDTO.setMedia(userMedia.getMedia() == null ? null : userMedia.getMedia().getId());
         userMediaDTO.setFlag(userMedia.getFlag() == null ? null : userMedia.getFlag().getId());
+        userMediaDTO.setAddedDate(userMedia.getAddedDate());
         return userMediaDTO;
     }
 
@@ -93,6 +94,7 @@ public class UserMediaService {
         final Flag flag = userMediaDTO.getFlag() == null ? null : flagRepository.findById(userMediaDTO.getFlag())
                 .orElseThrow(() -> new NotFoundException("flag not found"));
         userMedia.setFlag(flag);
+        userMedia.setAddedDate(userMediaDTO.getAddedDate());
         return userMedia;
     }
 

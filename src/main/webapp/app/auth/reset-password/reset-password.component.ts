@@ -3,21 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../auth.service';
-import { z } from 'zod';
-
-const ResetPasswordSchema = z.object({
-  password: z.string()
-    .min(8, $localize`:@@resetPasswordErrorPasswordMinLength:Le mot de passe doit contenir au moins 8 caractères`),
-  confirmPassword: z.string()
-    .min(1, $localize`:@@resetPasswordErrorConfirmPasswordRequired:Veuillez confirmer votre mot de passe`)
-}).refine((data) => data.password === data.confirmPassword, {
-  message: $localize`:@@resetPasswordErrorPasswordMismatch:Les mots de passe ne correspondent pas`,
-  path: ['confirmPassword']
-});
+import { ResetPasswordSchema } from '../../user/user.schema';
 
 @Component({
   selector: 'app-reset-password',
@@ -25,6 +16,7 @@ const ResetPasswordSchema = z.object({
     CommonModule,
     ReactiveFormsModule,
     ButtonModule,
+    CardModule,
     InputTextModule,
     ToastModule
   ],

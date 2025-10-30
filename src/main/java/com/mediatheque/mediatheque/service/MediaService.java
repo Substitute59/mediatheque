@@ -141,6 +141,7 @@ public class MediaService {
         completeMediaDTO.setCreatedAt(media.getCreatedAt());
         completeMediaDTO.setUpdatedAt(media.getUpdatedAt());
         completeMediaDTO.setFlag(new FlagDTO(userMedia.getFlag()));
+        completeMediaDTO.setAddedDate(userMedia.getAddedDate());
         if (media.getMediaType() != null) {
             completeMediaDTO.setMediaType(new MediaTypeDTO(media.getMediaType()));
         }

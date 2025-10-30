@@ -3,6 +3,7 @@ package com.mediatheque.mediatheque.service;
 import com.mediatheque.mediatheque.domain.MediaType;
 import com.mediatheque.mediatheque.events.BeforeDeleteMediaType;
 import com.mediatheque.mediatheque.model.MediaTypeDTO;
+import com.mediatheque.mediatheque.repos.MediaRepository;
 import com.mediatheque.mediatheque.repos.MediaTypeRepository;
 import com.mediatheque.mediatheque.util.CustomCollectors;
 import com.mediatheque.mediatheque.util.NotFoundException;
@@ -17,18 +18,25 @@ import org.springframework.stereotype.Service;
 public class MediaTypeService {
 
     private final MediaTypeRepository mediaTypeRepository;
+    private final MediaRepository mediaRepository;
     private final ApplicationEventPublisher publisher;
 
     public MediaTypeService(final MediaTypeRepository mediaTypeRepository,
-            final ApplicationEventPublisher publisher) {
+            final ApplicationEventPublisher publisher, 
+            final MediaRepository mediaRepository) {
         this.mediaTypeRepository = mediaTypeRepository;
+        this.mediaRepository = mediaRepository;
         this.publisher = publisher;
     }
 
     public List<MediaTypeDTO> findAll() {
         final List<MediaType> mediaTypes = mediaTypeRepository.findAll(Sort.by("id"));
         return mediaTypes.stream()
-                .map(mediaType -> mapToDTO(mediaType, new MediaTypeDTO()))
+                .map(mediaType -> {
+                    final MediaTypeDTO mediaTypeDTO = mapToDTO(mediaType, new MediaTypeDTO());
+                    mediaTypeDTO.setNumberOfMedias(mediaRepository.findAllByMediaTypeId(mediaType.getId()).size());
+                    return mediaTypeDTO;
+                })
                 .toList();
     }
 
@@ -61,11 +69,13 @@ public class MediaTypeService {
     private MediaTypeDTO mapToDTO(final MediaType mediaType, final MediaTypeDTO mediaTypeDTO) {
         mediaTypeDTO.setId(mediaType.getId());
         mediaTypeDTO.setName(mediaType.getName());
+        mediaTypeDTO.setIcon(mediaType.getIcon());
         return mediaTypeDTO;
     }
 
     private MediaType mapToEntity(final MediaTypeDTO mediaTypeDTO, final MediaType mediaType) {
         mediaType.setName(mediaTypeDTO.getName());
+        mediaType.setIcon(mediaTypeDTO.getIcon());
         return mediaType;
     }
 

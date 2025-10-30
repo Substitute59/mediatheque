@@ -1,12 +1,18 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NavigationStart, Router, RouterOutlet } from '@angular/router';
+import { NavigationStart, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { HeaderComponent } from 'app/common/header/header.component';
-
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule, RouterOutlet, HeaderComponent],
+  imports: [
+    CommonModule,
+    ButtonModule,
+    RouterLink,
+    RouterOutlet,
+    HeaderComponent
+  ],
   templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit {

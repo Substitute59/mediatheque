@@ -17,4 +17,6 @@ public interface MediaRepository extends JpaRepository<Media, Integer> {
 
     List<Media> findAllByMediaTagTagsId(Integer id);
 
+    List<Media> findAllByMediaTypeId(Integer id);
+
 }
