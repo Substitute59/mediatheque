@@ -30,8 +30,8 @@ export class UserMediaService {
     return this.http.put<number>(this.resourcePath + '/' + id, userMediaDTO);
   }
 
-  deleteUserMedia(id: number) {
-    return this.http.delete(this.resourcePath + '/' + id);
+  deleteUserMedia(id: number, userId: number) {
+    return this.http.delete(this.resourcePath + '/' + id + '/' + userId);
   }
 
   getUserValues() {

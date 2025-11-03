@@ -1,121 +1,227 @@
-<p-card class="my-8">
-    <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
-        <div class="flex items-center gap-4">
-            <p-button (click)="toggleFilterPanel()">
-                <i class="pi pi-filter"></i>
-                <span i18n="@@media.list.filter">Filtrer par</span>
-            </p-button>
-            <p-select
-                [options]="sortByOptions"
-                [(ngModel)]="selectedSortByOption"
-                optionLabel="label"
-                i18n-placeholder="@@media.list.sortby"
-                placeholder="Trier par"
-                class="w-full md:w-56"
-                (onChange)="onSortChange($event)"
-            />
+<div class="py-8">
+    <p-card class="mb-8">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <p-button (click)="toggleFilterPanel()" variant="outlined">
+                    <i class="pi pi-filter"></i>
+                    <span i18n="@@media.list.filter" class="whitespace-nowrap">Filtrer par</span>
+                </p-button>
+                <p-select
+                    [options]="sortByOptions"
+                    [(ngModel)]="selectedSortByOption"
+                    optionLabel="label"
+                    i18n-placeholder="@@media.list.sortby"
+                    placeholder="Trier par"
+                    class="w-full md:w-56"
+                    (onChange)="onSortChange($event)"
+                />
+            </div>
+            <div class="flex items-center gap-2">
+                <p-button [outlined]="displayMode !== 'grid'" (click)="setDisplayMode('grid')">
+                    <i class="pi pi-th-large"></i>
+                </p-button>
+                <p-button [outlined]="displayMode !== 'list'" (click)="setDisplayMode('list')">
+                    <i class="pi pi-list"></i>
+                </p-button>
+            </div>
         </div>
-        <div class="flex items-center gap-2">
-
+        @if (filterPanelVisible) {
+            <div class="flex flex-wrap items-center gap-4 py-4">
+                <p-select
+                    [options]="typeOptions"
+                    [(ngModel)]="selectedTypeOption"
+                    optionLabel="label"
+                    i18n-placeholder="@@media.list.filterby.type"
+                    placeholder="Tous les types"
+                    class="w-full md:w-56"
+                    (onChange)="onFilterChange()"
+                />
+                <p-select
+                    [options]="genreOptions"
+                    [(ngModel)]="selectedGenreOption"
+                    optionLabel="label"
+                    i18n-placeholder="@@media.list.filterby.genre"
+                    placeholder="Tous les genres"
+                    class="w-full md:w-56"
+                    (onChange)="onFilterChange()"
+                />
+                <p-select
+                    [options]="artistOptions"
+                    [(ngModel)]="selectedArtistOption"
+                    optionLabel="label"
+                    i18n-placeholder="@@media.list.filterby.artist"
+                    placeholder="Tous les artistes"
+                    class="w-full md:w-56"
+                    (onChange)="onFilterChange()"
+                />
+                <p-select
+                    [options]="collectionOptions"
+                    [(ngModel)]="selectedCollectionOption"
+                    optionLabel="label"
+                    i18n-placeholder="@@media.list.filterby.collection"
+                    placeholder="Toutes les collections"
+                    class="w-full md:w-56"
+                    (onChange)="onFilterChange()"
+                />
+                <p-select
+                    [options]="tagOptions"
+                    [(ngModel)]="selectedTagOption"
+                    optionLabel="label"
+                    i18n-placeholder="@@media.list.filterby.tag"
+                    placeholder="Tous les tags"
+                    class="w-full md:w-56"
+                    (onChange)="onFilterChange()"
+                />
+                <p-select
+                    [options]="statusOptions"
+                    [(ngModel)]="selectedStatusOption"
+                    optionLabel="label"
+                    i18n-placeholder="@@media.list.filterby.status"
+                    placeholder="Tous les status"
+                    class="w-full md:w-56"
+                    (onChange)="onFilterChange()"
+                />
+            </div>
+        }
+    </p-card>
+    @if (!medias || medias.length === 0) {
+        <div i18n="@@media.list.empty">No Medias could be found.</div>
+    } @else {
+        <div class="flex items-center justify-between gap-2 pb-4">
+            <h2 i18n="@@media.list.title" class="text-xl font-medium">Ma collection</h2>
+            <span i18n="@@media.list.count">{{ medias.length }} médias</span>
         </div>
-    </div>
-    @if (filterPanelVisible) {
-        <div class="flex flex-wrap items-center gap-4 py-4">
-            <p-select
-                [options]="typeOptions"
-                [(ngModel)]="selectedTypeOption"
-                optionLabel="label"
-                i18n-placeholder="@@media.list.filterby.type"
-                placeholder="Tous les types"
-                class="w-full md:w-56"
-                (onChange)="onFilterChange($event, 'type')"
-            />
-            <p-select
-                [options]="genreOptions"
-                [(ngModel)]="selectedGenreOption"
-                optionLabel="label"
-                i18n-placeholder="@@media.list.filterby.genre"
-                placeholder="Tous les genres"
-                class="w-full md:w-56"
-                (onChange)="onFilterChange($event, 'genre')"
-            />
-            <p-select
-                [options]="artistOptions"
-                [(ngModel)]="selectedArtistOption"
-                optionLabel="label"
-                i18n-placeholder="@@media.list.filterby.artist"
-                placeholder="Tous les artistes"
-                class="w-full md:w-56"
-                (onChange)="onFilterChange($event, 'artist')"
-            />
-            <p-select
-                [options]="collectionOptions"
-                [(ngModel)]="selectedCollectionOption"
-                optionLabel="label"
-                i18n-placeholder="@@media.list.filterby.collection"
-                placeholder="Toutes les collections"
-                class="w-full md:w-56"
-                (onChange)="onFilterChange($event, 'collection')"
-            />
-            <p-select
-                [options]="tagOptions"
-                [(ngModel)]="selectedTagOption"
-                optionLabel="label"
-                i18n-placeholder="@@media.list.filterby.tag"
-                placeholder="Tous les tags"
-                class="w-full md:w-56"
-                (onChange)="onFilterChange($event, 'tag')"
-            />
-            <p-select
-                [options]="statusOptions"
-                [(ngModel)]="selectedStatusOption"
-                optionLabel="label"
-                i18n-placeholder="@@media.list.filterby.status"
-                placeholder="Tous les status"
-                class="w-full md:w-56"
-                (onChange)="onFilterChange($event, 'status')"
-            />
-        </div>
-    }
-</p-card>
-@if (!medias || medias.length === 0) {
-    <div i18n="@@media.list.empty">No Medias could be found.</div>
-} @else {
-    <div class="overflow-x-auto">
-        <table class="w-full">
-            <thead>
-                <tr>
-                    <th scope="col" class="text-left p-2" i18n="@@media.id.label">Id</th>
-                    <th scope="col" class="text-left p-2" i18n="@@media.title.label">Title</th>
-                    <th scope="col" class="text-left p-2" i18n="@@media.coverUrl.label">Cover Url</th>
-                    <th scope="col" class="text-left p-2" i18n="@@media.createdAt.label">Created At</th>
-                    <th scope="col" class="text-left p-2" i18n="@@media.updatedAt.label">Updated At</th>
-                    <th scope="col" class="text-left p-2" i18n="@@media.mediaType.label">Media Type</th>
-                    <th scope="col" class="text-left p-2" i18n="@@media.genre.label">Genre</th>
-                    <th scope="col" class="text-left p-2" i18n="@@media.platform.label">Platform</th>
-                    <th><!-- --></th>
-                </tr>
-            </thead>
-            <tbody class="border-t-2 border-black">
-                @for (media of medias; track media.id) {
-                    <tr class="odd:bg-gray-100">
-                        <td class="p-2">{{ media.id }}</td>
-                        <td class="p-2">{{ media.title }}</td>
-                        <td class="p-2">{{ media.coverUrl }}</td>
-                        <td class="p-2">{{ media.createdAt }}</td>
-                        <td class="p-2">{{ media.updatedAt }}</td>
-                        <td class="p-2">{{ media.mediaType?.name }}</td>
-                        <td class="p-2">{{ media.genre?.name }}</td>
-                        <td class="p-2">{{ media.platform?.name }}</td>
-                        <td class="p-2">
-                            <div class="float-right whitespace-nowrap">
-                                <a [routerLink]="['/medias/edit', media.id]" class="inline-block text-white bg-gray-500 hover:bg-gray-600 focus:ring-gray-200 focus:ring-3 rounded px-2.5 py-1.5 text-sm" i18n="@@media.list.edit">Edit</a>
-                                <button type="button" (click)="confirmDelete(media.id!)" class="inline-block text-white bg-gray-500 hover:bg-gray-600 focus:ring-gray-200 focus:ring-3 rounded px-2.5 py-1.5 text-sm cursor-pointer" i18n="@@media.list.delete">Delete</button>
+        @if (displayMode === 'grid') {
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                @for (media of medias.slice(first, first + rows); track media.id) {
+                    <p-card>
+                        <ng-template #header>
+                            <a [routerLink]="['/media/', media.id]">
+                                <img [alt]="media.title" class="w-full" [src]="media.coverUrl || fallbackImgUrl" />
+                            </a>
+                            <p-tag [value]="media.mediaType?.name!" severity="contrast" class="absolute left-3 top-3 !font-medium" />
+                            <p-tag [value]="media.flag?.name!" [ngStyle]="{'background-color': media.flag?.color, 'color': 'white'}" class="absolute right-3 top-3 !font-medium" />
+                            @if (media.mediaReviews && media.mediaReviews.length) {
+                                <div class="absolute left-3 bottom-3 flex items-center gap-1">
+                                    <i class="pi pi-star-fill text-yellow-300"></i>
+                                    <span>{{ getAverageRating(media) }}/5</span>
+                                    <span i18n="@@media.list.rating.mine">(Ma note : {{ getCurrentUserRating(media) }}/5)</span>
+                                </div>
+                            }
+                        </ng-template>
+                        <ng-template #title>
+                            <a [routerLink]="['/media/', media.id]">
+                                {{ media.title }}
+                            </a>
+                            @if (media.mediaCollections && media.mediaCollections.length
+                                && media.mediaMediaCollections && media.mediaMediaCollections.length) {
+                                <div class="text-base">
+                                    ({{ media.mediaCollections[0].name }} -
+                                    {{ media.mediaMediaCollections[0].type }}
+                                    {{ media.mediaMediaCollections[0].position }})
+                                </div>
+                            }
+                        </ng-template>
+                        <ng-template #subtitle>
+                            {{ getArtistNames(media) }}
+                            -
+                            {{ media.genre?.name }}
+                            @if (media.platform) {
+                                - {{ media.platform.name }}
+                            }
+                        </ng-template>
+                        <div class="flex gap-2 mt-2 flex-wrap">
+                            @for (tag of media.mediaTagTags || []; track tag.id) {
+                                <p-chip [label]="tag.name!" class="!px-2 !py-1" />
+                            }
+                        </div>
+                        <ng-template #footer>
+                            <div class="flex justify-between gap-4 mt-1">
+                                <div class="flex items-center gap-2">
+                                    <i class="pi pi-calendar"></i>
+                                    <time [attr.datetime]="media.createdAt">
+                                        {{ media.createdAt | date:'shortDate' }}
+                                    </time>
+                                </div>
+                                <div class="flex items-center">
+                                    <a [routerLink]="['/media/', media.id]" pButton icon="pi pi-eye" [rounded]="true" [text]="true"></a>
+                                    <a [routerLink]="['/medias/edit', media.id]" pButton icon="pi pi-pen-to-square" [rounded]="true" [text]="true"></a>
+                                    <p-button (onClick)="confirmDelete($event, media.id!)" icon="pi pi-trash" [rounded]="true" [text]="true" />
+                                </div>
                             </div>
-                        </td>
-                    </tr>
+                            @if (errorMediaId === media.id) {
+                                <p class="text-red-600 text-sm" i18n="@@media.list.delete.error">Une erreur est survenue lors de la suppression.</p>
+                            }
+                        </ng-template>
+                    </p-card>
                 }
-            </tbody>
-        </table>
-    </div>
-}
+            </div>
+        } @else if (displayMode === 'list') {
+            <div class="flex flex-col gap-4">
+                @for (media of medias.slice(first, first + rows); track media.id) {
+                    <p-card>
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <div class="relative">
+                                <a [routerLink]="['/media/', media.id]">
+                                    <img [alt]="media.title" class="w-full md:w-48" [src]="media.coverUrl || fallbackImgUrl" />
+                                </a>
+                                <p-tag [value]="media.mediaType?.name!" severity="contrast" class="absolute left-3 top-3 !font-medium" />
+                                <p-tag [value]="media.flag?.name!" [ngStyle]="{'background-color': media.flag?.color, 'color': 'white'}" class="absolute right-3 top-3 !font-medium" />
+                                @if (media.mediaReviews && media.mediaReviews.length) {
+                                    <div class="flex items-center gap-1 pt-2">
+                                        <i class="pi pi-star-fill text-yellow-300"></i>
+                                        <span>{{ getAverageRating(media) }}/5</span>
+                                        <span i18n="@@media.list.rating.mine">(Ma note : {{ getCurrentUserRating(media) }}/5)</span>
+                                    </div>
+                                }
+                            </div>
+                            <div class="flex flex-col justify-between flex-grow">
+                                <div>
+                                    <a [routerLink]="['/media/', media.id]" class="text-xl font-medium">
+                                        {{ media.title }}
+                                    </a>
+                                    @if (media.mediaCollections && media.mediaCollections.length
+                                        && media.mediaMediaCollections && media.mediaMediaCollections.length) {
+                                        <div class="text-base">
+                                            ({{ media.mediaCollections[0].name }} -
+                                            {{ media.mediaMediaCollections[0].type }}
+                                            {{ media.mediaMediaCollections[0].position }})
+                                        </div>
+                                    }
+                                    <div class="text-slate-500 py-2">
+                                        {{ getArtistNames(media) }} - {{ media.genre?.name }}
+                                        @if (media.platform) {
+                                            - {{ media.platform.name }}
+                                        }
+                                    </div>
+                                    <div class="flex gap-2 mt-2 flex-wrap">
+                                        @for (tag of media.mediaTagTags || []; track tag.id) {
+                                            <p-chip [label]="tag.name!" class="!px-2 !py-1" />
+                                        }
+                                    </div>
+                                </div>
+                                <div class="flex justify-between gap-4 mt-4">
+                                    <div class="flex items-center gap-2">
+                                        <i class="pi pi-calendar"></i>
+                                        <time [attr.datetime]="media.createdAt">
+                                            {{ media.createdAt | date:'shortDate' }}
+                                        </time>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <a [routerLink]="['/media/', media.id]" pButton icon="pi pi-eye" [rounded]="true" [text]="true"></a>
+                                        <a [routerLink]="['/medias/edit', media.id]" pButton icon="pi pi-pen-to-square" [rounded]="true" [text]="true"></a>
+                                        <p-button (onClick)="confirmDelete($event, media.id!)" icon="pi pi-trash" [rounded]="true" [text]="true" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </p-card>
+                }
+            </div>
+        }
+    }
+    <p-card class="flex justify-center mt-8">
+        <p-paginator class="!p-0" (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows" [totalRecords]="medias?.length" [rowsPerPageOptions]="[12, 24, 36, 48, 60]" />
+    </p-card>
+</div>
+<p-confirmdialog />

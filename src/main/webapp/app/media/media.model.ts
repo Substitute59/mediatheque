@@ -57,9 +57,15 @@ export class MediaDTO {
     type?: string | null;
   }[] | null;
 
-  mediaMediaCollections?: {
+  mediaCollections?: {
     id?: number | null;
     name?: string | null;
+  }[] | null;
+
+  mediaMediaCollections?: {
+    id?: number | null;
+    type?: string | null;
+    position?: number | null;
   }[] | null;
 
   mediaReviews?: {

@@ -62,9 +62,9 @@ public class UserMediaResource {
         return ResponseEntity.ok(id);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUserMedia(@PathVariable(name = "id") final Integer id) {
-        userMediaService.delete(id);
+    @DeleteMapping("/{id}/{userId}")
+    public ResponseEntity<Void> deleteUserMedia(@PathVariable(name = "id") final Integer id, @PathVariable(name = "userId") final Integer userId) {
+        userMediaService.delete(id, userId);
         return ResponseEntity.noContent().build();
     }
 

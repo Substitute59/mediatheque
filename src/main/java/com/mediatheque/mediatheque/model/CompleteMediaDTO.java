@@ -39,7 +39,9 @@ public class CompleteMediaDTO {
 
     private List<ArtistDTO> mediaMediaArtists;
 
-    private List<CollectionDTO> mediaMediaCollections;
+    private List<CollectionDTO> mediaCollections;
+
+    private List<MediaCollectionDTO> mediaMediaCollections;
 
     private List<ReviewDTO> mediaReviews;
 
@@ -155,13 +157,22 @@ public class CompleteMediaDTO {
         this.mediaMediaArtists = mediaMediaArtists;
     }
 
-    public List<CollectionDTO> getMediaMediaCollections() {
+    public List<CollectionDTO> getMediaCollections() {
+        return mediaCollections;
+    }
+
+    public void setMediaCollections(final List<CollectionDTO> mediaCollections) {
+        this.mediaCollections = mediaCollections;
+    }
+
+    public List<MediaCollectionDTO> getMediaMediaCollections() {
         return mediaMediaCollections;
     }
 
-    public void setMediaMediaCollections(final List<CollectionDTO> mediaMediaCollections) {
+    public void setMediaMediaCollections(final List<MediaCollectionDTO> mediaMediaCollections) {
         this.mediaMediaCollections = mediaMediaCollections;
     }
+
     public List<ReviewDTO> getMediaReviews() {
         return mediaReviews;
     }

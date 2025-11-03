@@ -1,10 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'environments/environment';
-import { MediaDTO } from 'app/media/media.model';
+import { MediaDTO } from './media.model';
 import { map } from 'rxjs';
-import { transformRecordToMap } from 'app/common/utils';
-
+import { transformRecordToMap } from '../common/utils';
 
 @Injectable({
   providedIn: 'root',

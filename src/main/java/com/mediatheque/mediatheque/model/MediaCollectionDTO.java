@@ -1,5 +1,7 @@
 package com.mediatheque.mediatheque.model;
 
+import com.mediatheque.mediatheque.domain.MediaCollection;
+
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -18,6 +20,14 @@ public class MediaCollectionDTO {
 
     @NotNull
     private Integer collection;
+
+    public MediaCollectionDTO() {}
+
+    public MediaCollectionDTO(MediaCollection mediaCollection) {
+        this.id = mediaCollection.getId();
+        this.position = mediaCollection.getPosition();
+        this.type = mediaCollection.getType();
+    }
 
     public Integer getId() {
         return id;

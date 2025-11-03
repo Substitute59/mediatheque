@@ -1,31 +1,46 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, NavigationEnd, Router, RouterLink } from '@angular/router';
-import { ErrorHandler } from 'app/common/error-handler.injectable';
-import { MediaService } from 'app/media/media.service';
-import { MediaDTO } from 'app/media/media.model';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ErrorHandler } from '../common/error-handler.injectable';
+import { MediaDTO } from './media.model';
+import { MediaService } from './media.service';
+import { UserMediaService } from '../user-media/user-media.service';
 import { AuthService } from '../auth/auth.service';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
+import { ChipModule } from 'primeng/chip';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { FormsModule } from '@angular/forms';
-import { Select } from 'primeng/select';
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { Select, SelectChangeEvent } from 'primeng/select';
+import { TagModule } from 'primeng/tag';
+import { ToastModule } from 'primeng/toast';
 
 interface SelectOption {
   label: string;
   value: string;
-};
+}
 
 @Component({
   selector: 'app-media-list',
   imports: [
+    CommonModule,
     ButtonModule,
     CardModule,
-    CommonModule,
+    ChipModule,
+    ConfirmDialogModule,
     FormsModule,
+    PaginatorModule,
     Select,
+    TagModule,
+    ToastModule,
     RouterLink
   ],
-  templateUrl: './media-list.component.html'})
+  templateUrl: './media-list.component.html',
+  styleUrls: ['./media-list.component.scss'],
+  providers: [ConfirmationService, MessageService]
+})
 export class MediaListComponent {
   medias?: MediaDTO[];
   mediaTypeId?: number;
@@ -45,13 +60,20 @@ export class MediaListComponent {
   statusOptions: SelectOption[] | undefined;
   selectedStatusOption: SelectOption | undefined;
   firstLoadMedias?: MediaDTO[];
+  displayMode: 'list' | 'grid' = 'grid';
+  first: number = 0;
+  rows: number = 12;
+  fallbackImgUrl: string = $localize`:@@media.img.default:https://placehold.co/600x400?text=Sans+Image`;
+  errorMediaId: number = 0;
 
   constructor(
     private mediaService: MediaService,
+    private userMediaService: UserMediaService,
     private auth: AuthService,
     private errorHandler: ErrorHandler,
-    private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService
   ) {
     this.sortByOptions = [
       { label: $localize`:@@media.list.sortBy.default:Trier par`, value: '' },
@@ -151,8 +173,8 @@ export class MediaListComponent {
           { label: $localize`:@@media.list.filterby.collection:Toutes les collections`, value: '' }
         );
         this.medias?.map(media => {
-          if (media.mediaMediaCollections) {
-            media.mediaMediaCollections.forEach(collection => {
+          if (media.mediaCollections) {
+            media.mediaCollections.forEach(collection => {
               const exists = options.find(option => option.value === collection.id!.toString());
               if (!exists) {
                 options.push({
@@ -204,13 +226,12 @@ export class MediaListComponent {
     return options;
   }
 
-  onSortChange(event: any) {
+  onSortChange(event: SelectChangeEvent) {
     const sortValue = event.value.value;
     this.sortMedias(sortValue);
   }
 
-  onFilterChange(event: any, filterType: string) {
-    const filterValue = event.value.value;
+  onFilterChange() {
     this.filterMedias();
   }
 
@@ -234,6 +255,10 @@ export class MediaListComponent {
     }
   }
 
+  toggleFilterPanel() {
+    this.filterPanelVisible = !this.filterPanelVisible;
+  }
+
   filterMedias() {
     this.medias = this.firstLoadMedias;
 
@@ -250,7 +275,7 @@ export class MediaListComponent {
     }
     if (this.selectedCollectionOption && this.selectedCollectionOption.value) {
       this.medias = this.medias?.filter(media =>
-        media.mediaMediaCollections?.some(collection => collection.id!.toString() === this.selectedCollectionOption!.value)
+        media.mediaCollections?.some(collection => collection.id!.toString() === this.selectedCollectionOption!.value)
       );
     }
     if (this.selectedTagOption && this.selectedTagOption.value) {
@@ -273,45 +298,71 @@ export class MediaListComponent {
     this.statusOptions = this.getOptions('status');
   }
 
-  getMessage(key: string, details?: any) {
-    const messages: Record<string, string> = {
-      confirm: $localize`:@@delete.confirm:Do you really want to delete this element? This cannot be undone.`,
-      deleted: $localize`:@@media.delete.success:Media was removed successfully.`,
-      'media.mediaArtist.media.referenced': $localize`:@@media.mediaArtist.media.referenced:This entity is still referenced by Media Artist ${details?.id} via field Media.`,
-      'media.mediaCollection.media.referenced': $localize`:@@media.mediaCollection.media.referenced:This entity is still referenced by Media Collection ${details?.id} via field Media.`,
-      'media.review.media.referenced': $localize`:@@media.review.media.referenced:This entity is still referenced by Review ${details?.id} via field Media.`,
-      'media.userMedia.media.referenced': $localize`:@@media.userMedia.media.referenced:This entity is still referenced by User Media ${details?.id} via field Media.`
-    };
-    return messages[key];
+  setDisplayMode(mode: 'list' | 'grid') {
+    this.displayMode = mode;
   }
 
-  confirmDelete(id: number) {
-    if (!confirm(this.getMessage('confirm'))) {
-      return;
+  onPageChange(event: PaginatorState) {
+    this.first = event.first ?? 0;
+    this.rows = event.rows ?? 12;
+  }
+
+  getArtistNames(media: MediaDTO): string {
+    return media.mediaMediaArtists?.map(a => a.name).join(', ') || '';
+  }
+
+  getAverageRating(media: MediaDTO): number {
+    if (!media.mediaReviews || media.mediaReviews.length === 0) {
+      return 0;
     }
-    this.mediaService.deleteMedia(id)
-        .subscribe({
-          next: () => this.router.navigate(['/medias'], {
-            state: {
-              msgInfo: this.getMessage('deleted')
-            }
-          }),
-          error: (error) => {
-            if (error.error?.code === 'REFERENCED') {
-              const messageParts = error.error.message.split(',');
-              this.router.navigate(['/medias'], {
-                state: {
-                  msgError: this.getMessage(messageParts[0], { id: messageParts[1] })
-                }
-              });
-              return;
-            }
-            this.errorHandler.handleServerError(error.error)
-          }
-        });
+    const total = media.mediaReviews.reduce((sum, review) => sum + (review.rating || 0), 0);
+    return total / media.mediaReviews.length;
   }
 
-  toggleFilterPanel() {
-    this.filterPanelVisible = !this.filterPanelVisible;
+  getCurrentUserRating(media: MediaDTO): number | null {
+    const currentUserId = this.auth.currentUserValue?.id;
+    if (!media.mediaReviews || media.mediaReviews.length === 0 || !currentUserId) {
+      return null;
+    }
+    const userReview = media.mediaReviews.find(review => review.user === currentUserId);
+    return userReview ? userReview.rating || null : null;
+  }
+
+  showSuccess(summary: string, detail: string) {
+    this.messageService.add({ severity: 'success', summary, detail });
+  }
+
+  confirmDelete(event: Event, id: number) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: $localize`:@@media.list.delete.confirm:Êtes-vous certain de vouloir supprimer ce média de votre médiathèque ?`,
+      header: 'Confirmation',
+      closable: true,
+      closeOnEscape: true,
+      icon: 'pi pi-exclamation-triangle',
+      rejectButtonProps: {
+        label: $localize`:@@media.list.delete.confirm.cancel:Annuler`,
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: $localize`:@@media.list.delete.confirm.validate:Valider`
+      },
+      accept: () => {
+        this.userMediaService.deleteUserMedia(id, this.auth.currentUserValue?.id!)
+          .subscribe({
+            next: () => {
+              this.firstLoadMedias = this.firstLoadMedias?.filter(media => media.id !== id);
+              this.medias = this.medias?.filter(media => media.id !== id);
+              this.showSuccess(
+                $localize`:@@media.list.delete.confirmation:Média supprimé de votre médiathèque !`,
+                $localize`:@@media.list.delete.confirmation:Il reste disponible dans la recherche si vous voulez l'ajouter à nouveau plus tard.`,
+              );
+            },
+            error: () => this.errorMediaId = id
+          });
+      },
+      reject: () => {},
+    });
   }
 }

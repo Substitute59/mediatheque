@@ -69,8 +69,8 @@ public class UserMediaService {
         userMediaRepository.save(userMedia);
     }
 
-    public void delete(final Integer id) {
-        final UserMedia userMedia = userMediaRepository.findById(id)
+    public void delete(final Integer id, final Integer userId) {
+        final UserMedia userMedia = userMediaRepository.findFirstByUserIdAndMediaId(userId, id)
                 .orElseThrow(NotFoundException::new);
         userMediaRepository.delete(userMedia);
     }

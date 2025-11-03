@@ -18,6 +18,7 @@ import com.mediatheque.mediatheque.model.CollectionDTO;
 import com.mediatheque.mediatheque.model.CompleteMediaDTO;
 import com.mediatheque.mediatheque.model.FlagDTO;
 import com.mediatheque.mediatheque.model.GenreDTO;
+import com.mediatheque.mediatheque.model.MediaCollectionDTO;
 import com.mediatheque.mediatheque.model.MediaDTO;
 import com.mediatheque.mediatheque.model.MediaTypeDTO;
 import com.mediatheque.mediatheque.model.PlatformDTO;
@@ -167,16 +168,19 @@ public class MediaService {
                 .toList());
         }
         if (media.getMediaMediaCollections() != null) {
-            completeMediaDTO.setMediaMediaCollections(
+            completeMediaDTO.setMediaCollections(
                 media.getMediaMediaCollections().stream()
                 .map(collection -> new CollectionDTO(collection.getCollection()))
+                .toList());
+            completeMediaDTO.setMediaMediaCollections(
+                media.getMediaMediaCollections().stream()
+                .map(collection -> new MediaCollectionDTO(collection))
                 .toList());
         }
         if (media.getMediaReviews() != null) {
             completeMediaDTO.setMediaReviews(
                 media.getMediaReviews().stream()
                 .map(review -> new ReviewDTO(review))
-                .filter(review -> review.getUser() == userMedia.getUser().getId())
                 .toList());
         }
         return completeMediaDTO;

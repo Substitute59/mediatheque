@@ -13,6 +13,7 @@ import { PlatformListComponent } from './platform/platform-list.component';
 import { PlatformAddComponent } from './platform/platform-add.component';
 import { PlatformEditComponent } from './platform/platform-edit.component';
 import { MediaListComponent } from './media/media-list.component';
+import { MediaDetailsComponent } from './media/media-details.component';
 import { MediaAddComponent } from './media/media-add.component';
 import { MediaEditComponent } from './media/media-edit.component';
 import { MediaArtistListComponent } from './media-artist/media-artist-list.component';
@@ -119,6 +120,12 @@ export const routes: Routes = [
     component: MediaListComponent,
     canActivate: [authGuard],
     title: $localize`:@@media.list.headline:Medias`
+  },
+  {
+    path: 'media/:id',
+    component: MediaDetailsComponent,
+    canActivate: [authGuard],
+    title: $localize`:@@media.list.headline:Media Details`
   },
   {
     path: 'medias/add',

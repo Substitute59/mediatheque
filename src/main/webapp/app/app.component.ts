@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavigationStart, Router, RouterLink, RouterOutlet } from '@angular/router';
-import { HeaderComponent } from 'app/common/header/header.component';
+import { HeaderComponent } from './common/header/header.component';
 import { ButtonModule } from 'primeng/button';
 
 @Component({

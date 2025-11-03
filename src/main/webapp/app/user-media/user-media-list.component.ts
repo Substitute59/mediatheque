@@ -51,7 +51,7 @@ export class UserMediaListComponent implements OnInit, OnDestroy {
     if (!confirm(this.getMessage('confirm'))) {
       return;
     }
-    this.userMediaService.deleteUserMedia(id)
+    this.userMediaService.deleteUserMedia(id, 1)
         .subscribe({
           next: () => this.router.navigate(['/userMedias'], {
             state: {
