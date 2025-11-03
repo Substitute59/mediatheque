@@ -9,6 +9,8 @@ application-local.yml
 node/
 node_modules/
 .angular/cache
+.env
+*.ps1
 
 ## IntelliJ IDEA
 .idea
