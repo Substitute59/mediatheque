@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { MediaTypeService } from 'app/media-type/media-type.service';
-import { MediaTypeDTO } from 'app/media-type/media-type.model';
-import { ErrorHandler } from 'app/common/error-handler.injectable';
+import { MediaTypeService } from './media-type.service';
+import { MediaTypeDTO } from './media-type.model';
+import { ErrorHandler } from '../common/error-handler.injectable';
 import { CardModule } from 'primeng/card';
 
 @Component({

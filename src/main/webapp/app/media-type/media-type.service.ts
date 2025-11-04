@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'environments/environment';
-import { MediaTypeDTO } from 'app/media-type/media-type.model';
+import { MediaTypeDTO } from './media-type.model';
 
 @Injectable({
   providedIn: 'root',
