@@ -4,6 +4,8 @@ import com.mediatheque.mediatheque.model.MediaTypeDTO;
 import com.mediatheque.mediatheque.service.MediaTypeService;
 import jakarta.validation.Valid;
 import java.util.List;
+
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -28,8 +31,8 @@ public class MediaTypeResource {
     }
 
     @GetMapping
-    public ResponseEntity<List<MediaTypeDTO>> getAllMediaTypes() {
-        return ResponseEntity.ok(mediaTypeService.findAll());
+    public ResponseEntity<List<MediaTypeDTO>> getAllMediaTypes(@RequestParam(required = false) Integer userId) {
+        return ResponseEntity.ok(mediaTypeService.findAll(userId));
     }
 
     @GetMapping("/{id}")

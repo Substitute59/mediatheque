@@ -11,7 +11,7 @@ export class MediaTypeService {
   http = inject(HttpClient);
   resourcePath = environment.apiPath + '/api/mediaTypes';
 
-  getAllMediaTypes() {
-    return this.http.get<MediaTypeDTO[]>(this.resourcePath);
+  getAllMediaTypes(userId: number) {
+    return this.http.get<MediaTypeDTO[]>(this.resourcePath + '?userId=' + userId);
   }
 }

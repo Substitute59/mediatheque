@@ -3,7 +3,7 @@
         <a routerLink="/medias" [queryParams]="{typeId: mediaType.id}">
             <p-card class="text-center h-full hover:scale-102 transition-transform duration-200">
                 <p class="p-2">
-                    <img [src]="`type/${mediaType.icon}.png`" class="w-auto h-20 mx-auto">
+                    <img [src]="`${mediaType.icon}.png`" class="w-auto h-20 mx-auto">
                 </p>
                 <p class="p-2">
                     {{ mediaType.name }} ({{ mediaType.numberOfMedias }})
