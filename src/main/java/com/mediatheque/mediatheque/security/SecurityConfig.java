@@ -57,7 +57,8 @@ public class SecurityConfig {
                     "/*.ttf",
                     "/*.svg",
                     "/*.png",
-                    "/*.jpg"
+                    "/*.jpg",
+                    "/{path:^(?!api$).*$}/**"
                 ).permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
