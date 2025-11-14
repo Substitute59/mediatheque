@@ -15,6 +15,8 @@ import { DividerModule } from 'primeng/divider';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmationService } from 'primeng/api';
+import { environment } from 'environments/environment';
+import { ReviewAddComponent } from '../review/review-add.component';
 
 @Component({
   selector: 'app-media-details',
@@ -27,7 +29,8 @@ import { ConfirmationService } from 'primeng/api';
     TagModule,
     ButtonModule,
     ToastModule,
-    RouterLink
+    RouterLink,
+    ReviewAddComponent
   ],
   templateUrl: './media-details.component.html',
   styleUrl: './media-details.component.css',
@@ -39,6 +42,7 @@ export class MediaDetailsComponent {
   fallbackImgUrl: string = $localize`:@@media.img.default:https://placehold.co/600x400?text=Sans+Image`;
   errorMessage?: string;
   myReview?: ReviewDTO;
+  environment = environment;
 
   constructor(
     private mediaService: MediaService,
@@ -49,6 +53,14 @@ export class MediaDetailsComponent {
     private confirmationService: ConfirmationService,
     private location: Location
   ) {
+    this.loadMedia()
+  }
+
+  getBack() {
+    this.location.back();
+  }
+
+  loadMedia() {
     this.currentId = +this.route.snapshot.params['id'];
     this.mediaService.getMedia(this.currentId, this.auth.currentUserValue?.id!)
       .subscribe({
@@ -60,16 +72,16 @@ export class MediaDetailsComponent {
       })
   }
 
-  getBack() {
-    this.location.back();
-  }
-
   getWishlistIcon(media: MediaDTO): string {
     return `pi pi-${media.inUserMediaLibrary && media?.flag?.id === 2 ? 'heart-fill' : 'heart'}`;
   }
   
   getLoanIcon(media: MediaDTO): string {
     return `pi pi-${media?.flag?.id === 3 ? 'download' : 'upload'}`;
+  }
+
+  getCurrentUserId() {
+    return this.auth.currentUserValue?.id!;
   }
 
   errorFunction(errorMessage: string) {

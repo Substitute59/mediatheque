@@ -23,6 +23,20 @@ export function transformRecordToMap(data:Record<number, number|string>):Map<num
   return dataMap;
 }
 
+/**
+ * Helper function for transforming a Record to an object to support number as a key.
+ */
+export function transformRecordToArray(data:Record<number, number|string>):{label: string | number, value: string}[] {
+  const dataArray: {label: string | number, value: string}[] = [];
+  for (const [key, value] of Object.entries(data)) {
+    dataArray.push({
+      label: value,
+      value: key
+    })
+  }
+  return dataArray;
+}
+
 export const validOffsetDateTime: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const valid = control.value === null ||
       (/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]{1,6})?((\+[0-9]{2}:[0-9]{2})|Z)$/.test(control.value) &&

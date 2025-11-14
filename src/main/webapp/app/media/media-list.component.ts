@@ -18,6 +18,7 @@ import { Select, SelectChangeEvent } from 'primeng/select';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { NotificationService } from '../notification/notification.service';
+import { environment } from 'environments/environment';
 
 interface SelectOption {
   label: string;
@@ -66,6 +67,7 @@ export class MediaListComponent {
   rows: number = 12;
   fallbackImgUrl: string = $localize`:@@media.img.default:https://placehold.co/600x400?text=Sans+Image`;
   errorMediaId: number = 0;
+  environment = environment;
 
   queryParams = toSignal(this.route.queryParams, { initialValue: {} as Params });
   flagId = computed(() => {

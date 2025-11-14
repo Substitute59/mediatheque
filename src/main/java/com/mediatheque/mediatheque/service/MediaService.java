@@ -36,15 +36,23 @@ import com.mediatheque.mediatheque.repos.UserRepository;
 import com.mediatheque.mediatheque.util.CustomCollectors;
 import com.mediatheque.mediatheque.util.NotFoundException;
 import com.mediatheque.mediatheque.util.ReferencedException;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Service
@@ -114,16 +122,44 @@ public class MediaService {
                 .orElseThrow(NotFoundException::new);
     }
 
-    public Integer create(final MediaDTO mediaDTO) {
+    public Integer create(final MediaDTO mediaDTO, final MultipartFile coverFile) throws IOException {
         final Media media = new Media();
         mapToEntity(mediaDTO, media);
+
+        if (coverFile != null && !coverFile.isEmpty()) {
+            String fileName = UUID.randomUUID() + "_" + coverFile.getOriginalFilename();
+            Path uploadPath = Paths.get("uploads");
+            Files.createDirectories(uploadPath);
+            Files.copy(coverFile.getInputStream(), uploadPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+            media.setCoverUrl(fileName);
+        }
+
         return mediaRepository.save(media).getId();
     }
 
-    public void update(final Integer id, final MediaDTO mediaDTO) {
+    public void update(final Integer id, final MediaDTO mediaDTO, final MultipartFile coverFile) throws IOException {
         final Media media = mediaRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         mapToEntity(mediaDTO, media);
+
+        if (coverFile != null && !coverFile.isEmpty()) {
+            Path uploadPath = Paths.get("uploads");
+
+            if (media.getCoverUrl() != null && !media.getCoverUrl().isEmpty()) {
+                Path oldAvatarPath = uploadPath.resolve(media.getCoverUrl());
+                try {
+                    Files.deleteIfExists(oldAvatarPath);
+                } catch (IOException e) {
+                    System.err.println("❌ Impossible de supprimer l'ancienne couverture : " + e.getMessage());
+                }
+            }
+
+            String fileName = UUID.randomUUID() + "_" + coverFile.getOriginalFilename();
+            Files.createDirectories(uploadPath);
+            Files.copy(coverFile.getInputStream(), uploadPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+            media.setCoverUrl(fileName);
+        }
+
         mediaRepository.save(media);
     }
 

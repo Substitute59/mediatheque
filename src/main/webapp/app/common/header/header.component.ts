@@ -9,7 +9,6 @@ import { InputTextModule } from 'primeng/inputtext';
 import { AuthService } from '../../auth/auth.service';
 import { environment } from 'environments/environment';
 
-
 @Component({
   selector: 'app-header',
   imports: [

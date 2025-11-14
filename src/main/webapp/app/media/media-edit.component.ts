@@ -21,11 +21,10 @@ export class MediaEditComponent implements OnInit {
   router = inject(Router);
   errorHandler = inject(ErrorHandler);
 
-  mediaTypeValues?: Map<number,string>;
-  genreValues?: Map<number,string>;
-  platformValues?: Map<number,string>;
-  createdByValues?: Map<number,string>;
-  mediaTagTagsValues?: Map<number,string>;
+  mediaTypeValues?: {label: string | number, value: string}[];
+  genreValues?: {label: string | number, value: string}[];
+  platformValues?: {label: string | number, value: string}[];
+  mediaTagTagsValues?: {label: string | number, value: string}[];
   currentId?: number;
 
   editForm = new FormGroup({
@@ -64,11 +63,6 @@ export class MediaEditComponent implements OnInit {
     this.mediaService.getPlatformValues()
         .subscribe({
           next: (data) => this.platformValues = data,
-          error: (error) => this.errorHandler.handleServerError(error.error)
-        });
-    this.mediaService.getCreatedByValues()
-        .subscribe({
-          next: (data) => this.createdByValues = data,
           error: (error) => this.errorHandler.handleServerError(error.error)
         });
     this.mediaService.getMediaTagTagsValues()

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'environments/environment';
 import { MediaDTO } from './media.model';
 import { map } from 'rxjs';
-import { transformRecordToMap } from '../common/utils';
+import { transformRecordToArray } from '../common/utils';
 
 @Injectable({
   providedIn: 'root',
@@ -23,12 +23,22 @@ export class MediaService {
     return this.http.get<MediaDTO>(url);
   }
 
-  createMedia(mediaDTO: MediaDTO) {
-    return this.http.post<number>(this.resourcePath, mediaDTO);
+  createMedia(mediaDTO: MediaDTO, file?: File) {
+    const formData = new FormData();
+    formData.append('media', new Blob([JSON.stringify(mediaDTO)], { type: 'application/json' }));
+    if (file) {
+      formData.append('cover', file);
+    }
+    return this.http.post<number>(this.resourcePath, formData);
   }
 
-  updateMedia(id: number, mediaDTO: MediaDTO) {
-    return this.http.put<number>(this.resourcePath + '/' + id, mediaDTO);
+  updateMedia(id: number, mediaDTO: MediaDTO, file?: File) {
+    const formData = new FormData();
+    formData.append("media", new Blob([JSON.stringify(mediaDTO)], { type: "application/json" }));
+    if (file) {
+      formData.append("cover", file);
+    }
+    return this.http.put<void>(`${this.resourcePath}/${id}`, formData);
   }
 
   deleteMedia(id: number) {
@@ -37,27 +47,22 @@ export class MediaService {
 
   getMediaTypeValues() {
     return this.http.get<Record<string, string>>(this.resourcePath + '/mediaTypeValues')
-        .pipe(map(transformRecordToMap));
+        .pipe(map(transformRecordToArray));
   }
 
   getGenreValues() {
     return this.http.get<Record<string, string>>(this.resourcePath + '/genreValues')
-        .pipe(map(transformRecordToMap));
+        .pipe(map(transformRecordToArray));
   }
 
   getPlatformValues() {
     return this.http.get<Record<string, string>>(this.resourcePath + '/platformValues')
-        .pipe(map(transformRecordToMap));
-  }
-
-  getCreatedByValues() {
-    return this.http.get<Record<string, string>>(this.resourcePath + '/createdByValues')
-        .pipe(map(transformRecordToMap));
+        .pipe(map(transformRecordToArray));
   }
 
   getMediaTagTagsValues() {
     return this.http.get<Record<string, string>>(this.resourcePath + '/mediaTagTagsValues')
-        .pipe(map(transformRecordToMap));
+        .pipe(map(transformRecordToArray));
   }
 
 }

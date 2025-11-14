@@ -6,6 +6,12 @@ spring:
     hikari:
       connection-timeout: 30000
       maximum-pool-size: 10
+
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -17,6 +23,7 @@ spring:
             non_contextual_creation: true
         id:
           new_generator_mappings: true
+
   mail:
     host: ${MAIL_HOST}
     port: 587
@@ -30,9 +37,16 @@ spring:
             enable: true
           ssl.trust: "*"
           debug: true
+
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
+
+server:
+  tomcat:
+    max-swallow-size: -1
+    max-http-form-post-size: 20MB
+
 error:
   handling:
     http-status-in-json-response: true
@@ -40,8 +54,10 @@ error:
     full-stacktrace-http-statuses: 5xx
     log-levels:
       5xx: ERROR
+
 jwt:
   secret: ${JWT_SECRET}
   expiration: 3600000
+
 frontend:
   url: ${FRONTEND_URL}

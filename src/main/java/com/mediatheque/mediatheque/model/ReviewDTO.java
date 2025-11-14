@@ -88,7 +88,7 @@ public class ReviewDTO {
         return userName;
     }
 
-    public void setUser(final String userName) {
+    public void setUserName(final String userName) {
         this.userName = userName;
     }
 

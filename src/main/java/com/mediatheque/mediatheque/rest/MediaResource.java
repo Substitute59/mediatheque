@@ -1,5 +1,6 @@
 package com.mediatheque.mediatheque.rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mediatheque.mediatheque.model.MediaDTO;
 import com.mediatheque.mediatheque.service.GenreService;
 import com.mediatheque.mediatheque.service.MediaService;
@@ -8,8 +9,12 @@ import com.mediatheque.mediatheque.service.PlatformService;
 import com.mediatheque.mediatheque.service.TagService;
 import com.mediatheque.mediatheque.service.UserService;
 import jakarta.validation.Valid;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +26,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
@@ -34,6 +41,8 @@ public class MediaResource {
     private final PlatformService platformService;
     private final UserService userService;
     private final TagService tagService;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public MediaResource(final MediaService mediaService, final MediaTypeService mediaTypeService,
             final GenreService genreService, final PlatformService platformService,
@@ -65,16 +74,22 @@ public class MediaResource {
         return ResponseEntity.ok(mediaService.get(id));
     }
 
-    @PostMapping
-    public ResponseEntity<Integer> createMedia(@RequestBody @Valid final MediaDTO mediaDTO) {
-        final Integer createdId = mediaService.create(mediaDTO);
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Integer> createMedia(
+        @RequestPart("media") @Valid MediaDTO mediaDTO,
+        @RequestPart(value = "cover", required = false) MultipartFile coverFile
+    ) throws IOException {
+        Integer createdId = mediaService.create(mediaDTO, coverFile);
         return new ResponseEntity<>(createdId, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Integer> updateMedia(@PathVariable(name = "id") final Integer id,
-            @RequestBody @Valid final MediaDTO mediaDTO) {
-        mediaService.update(id, mediaDTO);
+    @PutMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Integer> updateMedia(
+        @PathVariable Integer id,
+        @RequestPart("media") @Valid MediaDTO mediaDTO,
+        @RequestPart(value = "cover", required = false) MultipartFile coverFile
+    ) throws IOException {
+        mediaService.update(id, mediaDTO, coverFile);
         return ResponseEntity.ok(id);
     }
 

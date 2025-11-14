@@ -44,10 +44,6 @@ export class MediaUtilsService {
     return media?.mediaReviews?.find(review => review.user === this.auth.currentUserValue?.id) || null;
   }
 
-  openAddReviewModal() {
-
-  }
-
   isCreatedByCurrentUser(media: MediaDTO): boolean {
     return media?.createdBy?.id === this.auth.currentUserValue?.id;
   }

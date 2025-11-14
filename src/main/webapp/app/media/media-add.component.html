@@ -1,19 +1,111 @@
-<div class="flex flex-wrap mb-6">
-    <h1 class="grow text-3xl md:text-4xl font-medium mb-2" i18n="@@media.add.headline">Add Media</h1>
-    <div>
-        <a routerLink="/medias" class="inline-block text-white bg-gray-500 hover:bg-gray-600 focus:ring-gray-200 focus:ring-4 rounded px-5 py-2" i18n="@@media.add.back">Back to list</a>
-    </div>
-</div>
-<form [formGroup]="addForm" (ngSubmit)="handleSubmit()">
-    <app-input-row [group]="addForm" field="title" i18n-label="@@media.title.label" label="Title" />
-    <app-input-row [group]="addForm" field="description" rowType="textarea" i18n-label="@@media.description.label" label="Description" />
-    <app-input-row [group]="addForm" field="coverUrl" i18n-label="@@media.coverUrl.label" label="Cover Url" />
-    <app-input-row [group]="addForm" field="createdAt" i18n-label="@@media.createdAt.label" label="Created At" />
-    <app-input-row [group]="addForm" field="updatedAt" i18n-label="@@media.updatedAt.label" label="Updated At" />
-    <app-input-row [group]="addForm" field="mediaType" rowType="select" [options]="mediaTypeValues" i18n-label="@@media.mediaType.label" label="Media Type" />
-    <app-input-row [group]="addForm" field="genre" rowType="select" [options]="genreValues" i18n-label="@@media.genre.label" label="Genre" />
-    <app-input-row [group]="addForm" field="platform" rowType="select" [options]="platformValues" i18n-label="@@media.platform.label" label="Platform" />
-    <app-input-row [group]="addForm" field="createdBy" rowType="select" [options]="createdByValues" i18n-label="@@media.createdBy.label" label="Created By" />
-    <app-input-row [group]="addForm" field="mediaTagTags" rowType="multiselect" [options]="mediaTagTagsValues" i18n-label="@@media.mediaTagTags.label" label="Media Tag Tags" />
-    <input type="submit" i18n-value="@@media.add.headline" value="Add Media" class="inline-block text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-300  focus:ring-4 rounded px-5 py-2 cursor-pointer mt-6" />
+<form (ngSubmit)="addMedia()" [formGroup]="addMediaForm" class="p-8">
+    <p-card class="w-full max-w-3xl mx-auto">
+        <div class="flex flex-col gap-8">
+
+            <!-- Header -->
+            <div class="flex flex-wrap mb-4">
+                <h1 class="grow text-3xl md:text-4xl font-medium mb-2" i18n="@@media.add.headline">Ajouter un média</h1>
+                <div>
+                    <a routerLink="/medias"
+                       class="inline-block text-white bg-gray-500 hover:bg-gray-600 focus:ring-gray-200 focus:ring-4 rounded px-5 py-2"
+                       i18n="@@media.add.back">
+                        Retour à la liste
+                    </a>
+                </div>
+            </div>
+
+            <!-- Title -->
+            <div class="flex flex-col gap-2 w-full">
+                <label class="font-medium" i18n="@@media.title.label">Titre*</label>
+                <input pInputText formControlName="title" class="w-full px-3 py-2 shadow-sm rounded-lg" />
+            </div>
+
+            <!-- Description -->
+            <div class="flex flex-col gap-2 w-full">
+                <label class="font-medium" i18n="@@media.description.label">Description</label>
+                <textarea pInputTextarea formControlName="description" rows="4" class="w-full"></textarea>
+            </div>
+
+            <!-- Cover Upload -->
+            <div class="flex flex-col gap-2 w-full">
+                <label class="font-medium" i18n="@@media.cover.label">Image de couverture</label>
+
+                <p-fileupload
+                    #coverUpload
+                    mode="advanced"
+                    name="cover"
+                    accept="image/*"
+                    maxFileSize="5000000"
+                    (onSelect)="onFileSelect($event)"
+                    chooseIcon="pi pi-upload"
+                    auto="false"
+                    customUpload="true"
+                    showUploadButton="false"
+                    showCancelButton="false"
+                    chooseLabel="Choisir une image"
+                    i18n-chooseLabel="@@media.cover.choose"
+                >
+                    <ng-template pTemplate="content">
+                        @if (!coverUpload.files.length) {
+                            <div i18n="@@media.cover.no.file">Aucun fichier sélectionné</div>
+                        } @else {
+                            <div *ngFor="let file of coverUpload.files">{{ file.name }}</div>
+                        }
+                    </ng-template>
+                </p-fileupload>
+            </div>
+
+            <!-- Media Type -->
+            <div class="flex flex-col gap-2">
+                <label class="font-medium" i18n="@@media.mediaType.label">Type de média</label>
+                <p-select [options]="mediaTypeValues"
+                    formControlName="mediaType"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Sélectionner"></p-select>
+            </div>
+
+            <!-- Genre -->
+            @if (addMediaForm.value.mediaType) {
+                <div class="flex flex-col gap-2">
+                    <label class="font-medium" i18n="@@media.genre.label">Genre</label>
+                    <p-select [options]="genreValues"
+                        formControlName="genre"
+                        optionLabel="label"
+                        optionValue="value"
+                        placeholder="Sélectionner"></p-select>
+                </div>
+            }
+
+            <!-- Platform -->
+            @if (addMediaForm.value.mediaType === '3') {
+                <div class="flex flex-col gap-2">
+                    <label class="font-medium" i18n="@@media.platform.label">Plateforme</label>
+                    <p-select [options]="platformValues"
+                        formControlName="platform"
+                        optionLabel="label"
+                        optionValue="value"
+                        placeholder="Sélectionner"></p-select>
+                </div>
+            }
+
+            <!-- Tags -->
+            <div class="flex flex-col gap-2">
+                <label class="font-medium" i18n="@@media.mediaTagTags.label">Tags</label>
+                <p-multiselect 
+                    [options]="mediaTagTagsValues"
+                    formControlName="mediaTagTags"
+                    optionLabel="label"
+                    placeholder="Sélectionner"></p-multiselect>
+            </div>
+
+            <!-- Submit -->
+            <button pButton class="w-full py-2 rounded-lg flex justify-center items-center gap-2">
+                <i class="pi pi-check"></i>
+                <span i18n="@@media.add.headline">Ajouter</span>
+            </button>
+
+        </div>
+    </p-card>
 </form>
+<p-toast />
