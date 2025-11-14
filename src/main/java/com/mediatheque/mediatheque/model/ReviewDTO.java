@@ -23,6 +23,8 @@ public class ReviewDTO {
     @NotNull
     private Integer user;
 
+    private String userName;
+
     public ReviewDTO() {}
 
     public ReviewDTO(Review review) {
@@ -31,6 +33,7 @@ public class ReviewDTO {
         this.comment = review.getComment();
         this.createdAt = review.getCreatedAt();
         this.user = review.getUser().getId();
+        this.userName = review.getUser().getUsername();
     }
 
     public Integer getId() {
@@ -79,6 +82,14 @@ public class ReviewDTO {
 
     public void setUser(final Integer user) {
         this.user = user;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUser(final String userName) {
+        this.userName = userName;
     }
 
 }

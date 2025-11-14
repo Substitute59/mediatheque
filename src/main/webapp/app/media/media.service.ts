@@ -18,8 +18,9 @@ export class MediaService {
     return this.http.get<MediaDTO[]>(url);
   }
 
-  getMedia(id: number) {
-    return this.http.get<MediaDTO>(this.resourcePath + '/' + id);
+  getMedia(id: number, userId: number = 0) {
+    const url = userId === 0 ? this.resourcePath + '/' + id : this.resourcePath + '/' + id + '?userId=' + userId;
+    return this.http.get<MediaDTO>(url);
   }
 
   createMedia(mediaDTO: MediaDTO) {

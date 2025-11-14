@@ -1,0 +1,12 @@
+:host ::ng-deep .p-card {
+    display: flex;
+
+    .p-card-header {
+        position: relative;
+    }
+
+    .p-card-body,
+    .p-card-content {
+        flex: 1;
+    }
+}

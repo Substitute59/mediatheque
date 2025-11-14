@@ -13,6 +13,7 @@ import com.mediatheque.mediatheque.util.CustomCollectors;
 import com.mediatheque.mediatheque.util.NotFoundException;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,10 @@ public class MediaTypeService {
                         return mediaTypeDTO;
                     }
                     long numberOfMedias = mediasWithCurrentMediaType.stream()
-                        .filter(media -> userMediaRepository.findFirstByUserIdAndMediaId(userId, media.getId()).orElse(null) != null)
+                        .filter(media -> {
+                            final UserMedia userMedia = userMediaRepository.findFirstByUserIdAndMediaId(userId, media.getId()).orElse(null);
+                            return userMedia != null && userMedia.getFlag() != null && userMedia.getFlag().getId() != 2;
+                        })
                         .count();
                     mediaTypeDTO.setNumberOfMedias((int) numberOfMedias);
                     return mediaTypeDTO;

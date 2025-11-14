@@ -6,9 +6,9 @@ import { routes } from './app.routes';
 import { CustomTitleStrategy } from './common/title-strategy.injectable';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
-import Aura from '@primeuix/themes/aura';
 import { AuthInterceptor } from './auth/auth.interceptor';
-
+import { MessageService } from 'primeng/api';
+import Aura from '@primeuix/themes/aura';
 
 const routeConfig: ExtraOptions = {
   onSameUrlNavigation: 'reload',
@@ -33,6 +33,7 @@ export const appConfig: ApplicationConfig = {
         theme: {
             preset: Aura
         }
-    })
+    }),
+    MessageService
   ]
 };

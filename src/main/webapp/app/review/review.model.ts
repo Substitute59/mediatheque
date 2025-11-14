@@ -10,5 +10,6 @@ export class ReviewDTO {
   createdAt?: string|null;
   media?: number|null;
   user?: number|null;
+  userName?: string|null;
 
 }

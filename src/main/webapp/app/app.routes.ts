@@ -47,7 +47,7 @@ export const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
-    title: $localize`:@@home.index.headline:Bienvenue sur votre médiathèque`
+    title: $localize`:@@home.index.headline:Bienvenue sur Stackr`
   },
   {
     path: 'users/edit/:id',

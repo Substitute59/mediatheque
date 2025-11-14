@@ -77,4 +77,8 @@ export class MediaDTO {
     user?: number | null;
   }[] | null;
 
+  inUserMediaLibrary?: boolean | null;
+
+  userMediaId?: number | null;
+
 }

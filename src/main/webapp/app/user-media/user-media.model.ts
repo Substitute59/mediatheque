@@ -9,5 +9,6 @@ export class UserMediaDTO {
   user?: number|null;
   media?: number|null;
   flag?: number|null;
+  addedDate?: string | null;
 
 }

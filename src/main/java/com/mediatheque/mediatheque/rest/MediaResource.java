@@ -55,7 +55,13 @@ public class MediaResource {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MediaDTO> getMedia(@PathVariable(name = "id") final Integer id) {
+    public ResponseEntity<?> getMedia(
+        @PathVariable(name = "id") final Integer id,
+        @RequestParam(required = false) Integer userId
+    ) {
+        if (userId != null) {
+            return ResponseEntity.ok(mediaService.getWithUserData(id, userId));
+        }
         return ResponseEntity.ok(mediaService.get(id));
     }
 

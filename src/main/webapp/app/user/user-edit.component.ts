@@ -1,18 +1,18 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
 import { UserService } from './user.service';
 import { AuthService } from '../auth/auth.service';
 import { UserEditSchema } from './user.schema';
 import { environment } from 'environments/environment';
 import { take } from 'rxjs/operators';
+import { NotificationService } from '../notification/notification.service';
 
 interface UploadEvent {
   originalEvent: Event;
@@ -30,8 +30,7 @@ interface UploadEvent {
     FileUploadModule,
     ToastModule
   ],
-  templateUrl: './user-edit.component.html',
-  providers: [MessageService]
+  templateUrl: './user-edit.component.html'
 })
 export class UserEditComponent {
   currentId?: number;
@@ -46,7 +45,7 @@ export class UserEditComponent {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private auth: AuthService,
-    private messageService: MessageService
+    private notif: NotificationService
   ) {
     this.userEditForm = this.fb.group({
       username: [''],
@@ -67,10 +66,6 @@ export class UserEditComponent {
     if (file) {
       this.userEditForm.patchValue({ avatar: file });
     }
-  }
-
-  showSuccess(summary: string, detail: string) {
-    this.messageService.add({ severity: 'success', summary, detail });
   }
 
   userEdit() {
@@ -103,7 +98,7 @@ export class UserEditComponent {
           next: () => {
             this.errorMessage = $localize`:@@userEditSuccessMsg:Vos nouvelles informations ont bien été enregistrées !`;
             this.errorField = '';
-            this.showSuccess($localize`:@@userEditSuccessTitle:Mise à jour réussie !`, this.errorMessage);
+            this.notif.showSuccess($localize`:@@userEditSuccessTitle:Mise à jour réussie !`, this.errorMessage);
           }
         });
       },

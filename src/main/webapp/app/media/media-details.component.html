@@ -1,1 +1,145 @@
-<p>media-details works!</p>
+<div class="py-8">
+    @if (!media) {
+        <div class="mb-8" i18n="@@media.null">This Media couldn't be found.</div>
+    } @else {
+        <p-card>
+            <ng-template #header>
+                <div class="relative">
+                    <img
+                        [alt]="media.title"
+                        class="w-full max-h-[600px] object-cover rounded-md"
+                        [src]="media.coverUrl || fallbackImgUrl"
+                    />
+                    <p-tag
+                        [value]="media.mediaType?.name!"
+                        severity="contrast"
+                        class="absolute left-3 top-3 !font-medium"
+                    />
+                    <p-tag
+                        [value]="media.flag?.name!"
+                        [ngStyle]="{'background-color': media.flag?.color, 'color': 'white'}"
+                        class="absolute right-3 top-3 !font-medium"
+                    />
+                </div>
+            </ng-template>
+
+            <ng-template #title>
+                <div class="flex flex-col gap-1">
+                    <h2 class="text-3xl font-semibold leading-tight">{{ media.title }}</h2>
+                    @if (media.mediaCollections && media.mediaCollections.length
+                        && media.mediaMediaCollections && media.mediaMediaCollections.length) {
+                        <div class="text-base text-gray-600">
+                            ({{ media.mediaCollections[0].name }} -
+                            {{ media.mediaMediaCollections[0].type }}
+                            {{ media.mediaMediaCollections[0].position }})
+                        </div>
+                    }
+                </div>
+            </ng-template>
+
+            <ng-template #subtitle>
+                {{ mediaUtilsService.getArtistNames(media) }}
+                -
+                {{ media.genre?.name }}
+                @if (media.platform) {
+                    - {{ media.platform.name }}
+                }
+            </ng-template>
+
+            <div class="flex items-center gap-2">
+                <i class="pi pi-calendar"></i>
+                <time [attr.datetime]="media.createdAt">
+                    {{ media.createdAt | date:'shortDate' }}
+                </time>
+            </div>
+
+            <div class="my-4 text-justify">
+                {{ media.description }}
+            </div>
+
+            @if (media.mediaTagTags && media.mediaTagTags.length) {
+                <div class="flex gap-2 py-2 flex-wrap">
+                    @for (tag of media.mediaTagTags || []; track tag.id) {
+                        <p-chip [label]="tag.name!" class="!px-2 !py-1" />
+                    }
+                </div>
+            }
+
+            <p-divider />
+            <div class="pt-4 pb-6">
+                <h3 class="text-2xl font-semibold mb-2 flex items-center gap-2">
+                    <i class="pi pi-comments"></i>
+                    Avis des utilisateurs
+                    @if (media.mediaReviews && media.mediaReviews.length) {
+                        <div class="flex items-center gap-1 text-base">
+                            (<i class="pi pi-star-fill text-yellow-300"></i>
+                            <span>{{ mediaUtilsService.getAverageRating(media) }}/5</span>)
+                        </div>
+                    }
+                </h3>
+                @if (media.mediaReviews && media.mediaReviews.length) {
+                    <div class="mt-4 p-4 border border-gray-300 rounded-md bg-gray-50">
+                        <h4 class="font-semibold mb-2">Mon avis</h4>
+                        <div class="flex items-center gap-1 mb-2">
+                            <i class="pi pi-star-fill text-yellow-300"></i>
+                            <span>{{ myReview?.rating }}/5</span>
+                        </div>
+                        <p class="whitespace-pre-line">{{ myReview?.comment }}</p>
+                    </div>
+                    @for (review of mediaUtilsService.getOthersReviews(media) || []; track review.id) {
+                        <div class="mt-4 p-4 border border-gray-300 rounded-md bg-gray-50">
+                            <h4 class="font-semibold mb-2">{{ review.userName }}</h4>
+                            <div class="flex items-center gap-1 mb-2">
+                                <i class="pi pi-star-fill text-yellow-300"></i>
+                                <span>{{ review.rating }}/5</span>
+                            </div>
+                            <p class="whitespace-pre-line">{{ review.comment }}</p>
+                        </div>
+                    }
+                } @else {
+                    <div i18n="@@media.details.review.none" class="mb-3">Il n'y a pas encore de review pour ce média.</div>
+                }
+                @if (!myReview) {
+                    <p-button severity="contrast" (click)="mediaUtilsService.openAddReviewModal()" i18n="@@media.details.review.add">Ajouter ma review</p-button>
+                }
+            </div>
+
+            <ng-template #footer>
+                <div class="flex justify-between items-center flex-wrap gap-2">
+                    <div class="flex items-center gap-2">
+                        <p-button icon="pi pi-arrow-left" (click)="getBack()" label="Retour"></p-button>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        @if (mediaUtilsService.isCreatedByCurrentUser(media)) {
+                            <a [routerLink]="['/medias/edit', media.id]" pButton icon="pi pi-pen-to-square" [rounded]="true" [text]="true"></a>
+                        }
+                        @if (media.inUserMediaLibrary && (media.flag?.id === 3 || media.flag?.id === 1)) {
+                            <p-button (onClick)="updateStatus(media)" [icon]="getLoanIcon(media)" [rounded]="true" [text]="true" />
+                            <p-button (onClick)="confirmDelete($event, media)" icon="pi pi-trash" [rounded]="true" [text]="true" />
+                        }
+                        @if (!media.flag?.id || media.flag?.id === 2) {
+                            <p-button (onClick)="toggleFromMyWishlist(media)" [icon]="getWishlistIcon(media)" [rounded]="true" [text]="true" />
+                            <p-button (onClick)="addToMyMediaLibrary(media)" icon="pi pi-plus" [rounded]="true" [text]="true" />
+                        }
+                    </div>
+                </div>
+                @if (errorMessage) {
+                    <p class="text-red-600 text-sm" i18n="@@media.list.delete.error">{{ errorMessage }}</p>
+                }
+            </ng-template>
+        </p-card>
+        <div class="pt-4 px-2 flex flex-col md:flex-row md:justify-between gap-2 text-gray-600 text-sm">
+            <div>
+                <i class="pi pi-user mr-1"></i>
+                Fiche créé par <strong>{{ media.createdBy?.username }}</strong>
+            </div>
+            <div>
+                <i class="pi pi-calendar mr-1"></i>
+                Créé le {{ media.createdAt | date: 'shortDate' }}
+                — Dernière mise à jour le {{ media.updatedAt | date: 'shortDate' }}
+            </div>
+        </div>
+    }
+</div>
+<p-confirmdialog />
+<p-toast />

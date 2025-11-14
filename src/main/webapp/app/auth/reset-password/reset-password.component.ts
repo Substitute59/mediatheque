@@ -6,9 +6,9 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
 import { AuthService } from '../auth.service';
 import { ResetPasswordSchema } from '../../user/user.schema';
+import { NotificationService } from '../../notification/notification.service';
 
 @Component({
   selector: 'app-reset-password',
@@ -20,8 +20,7 @@ import { ResetPasswordSchema } from '../../user/user.schema';
     InputTextModule,
     ToastModule
   ],
-  templateUrl: './reset-password.component.html',
-  providers: [MessageService]
+  templateUrl: './reset-password.component.html'
 })
 export class ResetPasswordComponent implements OnInit {
   resetPasswordForm: FormGroup;
@@ -34,7 +33,7 @@ export class ResetPasswordComponent implements OnInit {
     private route: ActivatedRoute,
     private auth: AuthService,
     private router: Router,
-    private messageService: MessageService
+    private notif: NotificationService
   ) {
     this.resetPasswordForm = this.fb.group({
       password: [''],
@@ -49,10 +48,6 @@ export class ResetPasswordComponent implements OnInit {
       this.errorMessage = $localize`:@@resetPasswordErrorInvalidToken:Token invalide`;
       this.errorField = 'token';
     }
-  }
-
-  showSuccess(summary: string, detail: string) {
-    this.messageService.add({ severity: 'success', summary, detail });
   }
 
   resetPassword() {
@@ -86,7 +81,7 @@ export class ResetPasswordComponent implements OnInit {
     this.auth.resetPassword(this.token, this.resetPasswordForm.value.password).subscribe({
       next: () => {
         const successMsg = $localize`:@@resetPasswordSuccessMsg:Vous pouvez maintenant vous connecter.`;
-        this.showSuccess(
+        this.notif.showSuccess(
           $localize`:@@resetPasswordSuccessTitle:Mot de passe mis à jour !`, 
           successMsg
         );

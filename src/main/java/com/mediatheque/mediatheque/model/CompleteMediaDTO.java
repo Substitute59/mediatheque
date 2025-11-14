@@ -45,6 +45,10 @@ public class CompleteMediaDTO {
 
     private List<ReviewDTO> mediaReviews;
 
+    private Boolean inUserMediaLibrary;
+
+    private Integer userMediaId;
+
     public Integer getId() {
         return id;
     }
@@ -179,6 +183,22 @@ public class CompleteMediaDTO {
 
     public void setMediaReviews(final List<ReviewDTO> mediaReviews) {
         this.mediaReviews = mediaReviews;
+    }
+
+    public Boolean getInUserMediaLibrary() {
+        return inUserMediaLibrary;
+    }
+
+    public void setInUserMediaLibrary(final Boolean inUserMediaLibrary) {
+        this.inUserMediaLibrary = inUserMediaLibrary;
+    }
+
+    public Integer getUserMediaId() {
+        return userMediaId;
+    }
+
+    public void setUserMediaId(final Integer userMediaId) {
+        this.userMediaId = userMediaId;
     }
 
 }

@@ -7,9 +7,9 @@ import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
 import { AuthService } from '../auth.service';
 import { ForgotPasswordSchema } from '../../user/user.schema';
+import { NotificationService } from '../../notification/notification.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -22,22 +22,21 @@ import { ForgotPasswordSchema } from '../../user/user.schema';
     InputTextModule,
     ToastModule
   ],
-  templateUrl: './forgot-password.component.html',
-  providers: [MessageService]
+  templateUrl: './forgot-password.component.html'
 })
 export class ForgotPasswordComponent {
   forgotPasswordForm: FormGroup;
   errorField: string | number = '';
   errorMessage: string = '';
 
-  constructor(private auth: AuthService, private router: Router, private fb: FormBuilder, private messageService: MessageService) {
+  constructor(
+    private auth: AuthService,
+    private fb: FormBuilder,
+    private notif: NotificationService
+  ) {
     this.forgotPasswordForm = this.fb.group({
       username: ['']
     });
-  }
-
-  showSuccess(summary: string, detail: string) {
-    this.messageService.add({ severity: 'success', summary, detail });
   }
 
   forgotPassword() {
@@ -58,7 +57,7 @@ export class ForgotPasswordComponent {
         next: () => {
           this.errorMessage = $localize`:@@forgotPasswordSuccessMsg:Si un compte existe avec cet email, un lien de réinitialisation vous sera envoyé`;
           this.errorField = '';
-          this.showSuccess($localize`:@@forgotPasswordSuccessTitle:Demande bien reçue !`, this.errorMessage);
+          this.notif.showSuccess($localize`:@@forgotPasswordSuccessTitle:Demande bien reçue !`, this.errorMessage);
         },
         error: () => {
           this.errorMessage = $localize`:@@forgotPasswordError:Une erreur est survenue.`;

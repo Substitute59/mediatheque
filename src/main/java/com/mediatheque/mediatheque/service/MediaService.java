@@ -25,6 +25,7 @@ import com.mediatheque.mediatheque.model.PlatformDTO;
 import com.mediatheque.mediatheque.model.ReviewDTO;
 import com.mediatheque.mediatheque.model.TagDTO;
 import com.mediatheque.mediatheque.model.UserDTO;
+import com.mediatheque.mediatheque.model.UserMediaDTO;
 import com.mediatheque.mediatheque.repos.GenreRepository;
 import com.mediatheque.mediatheque.repos.MediaRepository;
 import com.mediatheque.mediatheque.repos.MediaTypeRepository;
@@ -95,6 +96,24 @@ public class MediaService {
                 .orElseThrow(NotFoundException::new);
     }
 
+    public CompleteMediaDTO getWithUserData(final Integer id, final Integer userId) {
+        return mediaRepository.findById(id)
+                .map(media -> {
+                    UserMedia userMedia = userMediaRepository.findFirstByUserIdAndMediaId(userId, id)
+                            .orElse(null);
+                    if (userMedia == null) {
+                        userMedia = userMediaRepository.findFirstByMediaId(id);
+                        if (userMedia == null) {
+                            userMedia = new UserMedia();
+                            userMedia.setMedia(media);
+                        }
+                        return userMediaToCompleteMediaDTO(userMedia);
+                    }
+                    return userMediaToCompleteMediaDTO(userMedia, true);
+                })
+                .orElseThrow(NotFoundException::new);
+    }
+
     public Integer create(final MediaDTO mediaDTO) {
         final Media media = new Media();
         mapToEntity(mediaDTO, media);
@@ -132,7 +151,7 @@ public class MediaService {
         return mediaDTO;
     }
 
-    private CompleteMediaDTO userMediaToCompleteMediaDTO(final UserMedia userMedia) {
+    private CompleteMediaDTO userMediaToCompleteMediaDTO(final UserMedia userMedia, Boolean... isInUserMediaLibrary) {
         final Media media = userMedia.getMedia();
         final CompleteMediaDTO completeMediaDTO = new CompleteMediaDTO();
         completeMediaDTO.setId(media.getId());
@@ -141,8 +160,12 @@ public class MediaService {
         completeMediaDTO.setCoverUrl(media.getCoverUrl());
         completeMediaDTO.setCreatedAt(media.getCreatedAt());
         completeMediaDTO.setUpdatedAt(media.getUpdatedAt());
-        completeMediaDTO.setFlag(new FlagDTO(userMedia.getFlag()));
-        completeMediaDTO.setAddedDate(userMedia.getAddedDate());
+        if (userMedia.getFlag() != null) {
+            completeMediaDTO.setFlag(new FlagDTO(userMedia.getFlag()));
+        }
+        if (userMedia.getAddedDate() != null) {
+            completeMediaDTO.setAddedDate(userMedia.getAddedDate());
+        }
         if (media.getMediaType() != null) {
             completeMediaDTO.setMediaType(new MediaTypeDTO(media.getMediaType()));
         }
@@ -182,6 +205,12 @@ public class MediaService {
                 media.getMediaReviews().stream()
                 .map(review -> new ReviewDTO(review))
                 .toList());
+        }
+        if (isInUserMediaLibrary.length > 0) {
+            completeMediaDTO.setInUserMediaLibrary(isInUserMediaLibrary[0]);
+        }
+        if (userMedia.getId() != null) {
+            completeMediaDTO.setUserMediaId(userMedia.getId());
         }
         return completeMediaDTO;
     }

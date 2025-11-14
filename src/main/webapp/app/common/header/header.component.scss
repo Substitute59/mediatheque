@@ -1,0 +1,9 @@
+:host ::ng-deep .p-menubar-item-content {
+    color: var(--p-slate-100);
+
+    .p-menubar-item-link-active {
+        color: var(--p-slate-800);
+        background-color: var(--p-slate-100);
+        border-radius: var(--p-menubar-base-item-border-radius);
+    }
+}

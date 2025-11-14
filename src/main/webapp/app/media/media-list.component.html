@@ -72,15 +72,17 @@
                     class="w-full md:w-56"
                     (onChange)="onFilterChange()"
                 />
-                <p-select
-                    [options]="statusOptions"
-                    [(ngModel)]="selectedStatusOption"
-                    optionLabel="label"
-                    i18n-placeholder="@@media.list.filterby.status"
-                    placeholder="Tous les status"
-                    class="w-full md:w-56"
-                    (onChange)="onFilterChange()"
-                />
+                @if (!flagId()) {
+                    <p-select
+                        [options]="statusOptions"
+                        [(ngModel)]="selectedStatusOption"
+                        optionLabel="label"
+                        i18n-placeholder="@@media.list.filterby.status"
+                        placeholder="Tous les status"
+                        class="w-full md:w-56"
+                        (onChange)="onFilterChange()"
+                    />
+                }
             </div>
         }
     </p-card>
@@ -88,7 +90,7 @@
         <div i18n="@@media.list.empty">No Medias could be found.</div>
     } @else {
         <div class="flex items-center justify-between gap-2 pb-4">
-            <h2 i18n="@@media.list.title" class="text-xl font-medium">Ma collection</h2>
+            <h2 i18n="@@media.list.title" class="text-xl font-medium">Ma médiathèque</h2>
             <span i18n="@@media.list.count">{{ medias.length }} médias</span>
         </div>
         @if (displayMode === 'grid') {
@@ -104,8 +106,8 @@
                             @if (media.mediaReviews && media.mediaReviews.length) {
                                 <div class="absolute left-3 bottom-3 flex items-center gap-1">
                                     <i class="pi pi-star-fill text-yellow-300"></i>
-                                    <span>{{ getAverageRating(media) }}/5</span>
-                                    <span i18n="@@media.list.rating.mine">(Ma note : {{ getCurrentUserRating(media) }}/5)</span>
+                                    <span>{{ mediaUtilsService.getAverageRating(media) }}/5</span>
+                                    <span i18n="@@media.list.rating.mine">(Ma note : {{ mediaUtilsService.getCurrentUserRating(media) }}/5)</span>
                                 </div>
                             }
                         </ng-template>
@@ -123,7 +125,7 @@
                             }
                         </ng-template>
                         <ng-template #subtitle>
-                            {{ getArtistNames(media) }}
+                            {{ mediaUtilsService.getArtistNames(media) }}
                             -
                             {{ media.genre?.name }}
                             @if (media.platform) {
@@ -145,8 +147,10 @@
                                 </div>
                                 <div class="flex items-center">
                                     <a [routerLink]="['/media/', media.id]" pButton icon="pi pi-eye" [rounded]="true" [text]="true"></a>
-                                    <a [routerLink]="['/medias/edit', media.id]" pButton icon="pi pi-pen-to-square" [rounded]="true" [text]="true"></a>
-                                    <p-button (onClick)="confirmDelete($event, media.id!)" icon="pi pi-trash" [rounded]="true" [text]="true" />
+                                    @if (mediaUtilsService.isCreatedByCurrentUser(media)) {
+                                        <a [routerLink]="['/medias/edit', media.id]" pButton icon="pi pi-pen-to-square" [rounded]="true" [text]="true"></a>
+                                    }
+                                    <p-button (onClick)="confirmDelete($event, media)" icon="pi pi-trash" [rounded]="true" [text]="true" />
                                 </div>
                             </div>
                             @if (errorMediaId === media.id) {
@@ -170,8 +174,8 @@
                                 @if (media.mediaReviews && media.mediaReviews.length) {
                                     <div class="flex items-center gap-1 pt-2">
                                         <i class="pi pi-star-fill text-yellow-300"></i>
-                                        <span>{{ getAverageRating(media) }}/5</span>
-                                        <span i18n="@@media.list.rating.mine">(Ma note : {{ getCurrentUserRating(media) }}/5)</span>
+                                        <span>{{ mediaUtilsService.getAverageRating(media) }}/5</span>
+                                        <span i18n="@@media.list.rating.mine">(Ma note : {{ mediaUtilsService.getCurrentUserRating(media) }}/5)</span>
                                     </div>
                                 }
                             </div>
@@ -189,7 +193,7 @@
                                         </div>
                                     }
                                     <div class="text-slate-500 py-2">
-                                        {{ getArtistNames(media) }} - {{ media.genre?.name }}
+                                        {{ mediaUtilsService.getArtistNames(media) }} - {{ media.genre?.name }}
                                         @if (media.platform) {
                                             - {{ media.platform.name }}
                                         }
@@ -209,8 +213,10 @@
                                     </div>
                                     <div class="flex items-center">
                                         <a [routerLink]="['/media/', media.id]" pButton icon="pi pi-eye" [rounded]="true" [text]="true"></a>
-                                        <a [routerLink]="['/medias/edit', media.id]" pButton icon="pi pi-pen-to-square" [rounded]="true" [text]="true"></a>
-                                        <p-button (onClick)="confirmDelete($event, media.id!)" icon="pi pi-trash" [rounded]="true" [text]="true" />
+                                        @if (mediaUtilsService.isCreatedByCurrentUser(media)) {
+                                            <a [routerLink]="['/medias/edit', media.id]" pButton icon="pi pi-pen-to-square" [rounded]="true" [text]="true"></a>
+                                        }
+                                        <p-button (onClick)="confirmDelete($event, media)" icon="pi pi-trash" [rounded]="true" [text]="true" />
                                     </div>
                                 </div>
                             </div>
@@ -225,3 +231,4 @@
     </p-card>
 </div>
 <p-confirmdialog />
+<p-toast />
