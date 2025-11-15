@@ -1,51 +1,67 @@
-import { Component, inject } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
-import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
-import { InputRowComponent } from 'app/common/input-row/input-row.component';
-import { PlatformService } from 'app/platform/platform.service';
-import { PlatformDTO } from 'app/platform/platform.model';
-import { ErrorHandler } from 'app/common/error-handler.injectable';
-
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { PlatformService } from './platform.service';
+import { PlatformDTO } from './platform.model';
+import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { RatingModule } from 'primeng/rating';
+import { NotificationService } from '../notification/notification.service';
 
 @Component({
   selector: 'app-platform-add',
-  imports: [CommonModule, RouterLink, ReactiveFormsModule, InputRowComponent],
+  imports: [
+    CommonModule,
+    ButtonModule,
+    DialogModule,
+    InputTextModule,
+    RatingModule,
+    ReactiveFormsModule,
+    FormsModule
+  ],
   templateUrl: './platform-add.component.html'
 })
 export class PlatformAddComponent {
+  visible: boolean = false;
+  name: string = '';
+  errorName: string = '';
+  errorMessage: string = '';
+  @Output() savePlatform = new EventEmitter<void>();
+  
+  constructor(
+    private platformService: PlatformService,
+    private notif: NotificationService
+  ) {}
 
-  platformService = inject(PlatformService);
-  router = inject(Router);
-  errorHandler = inject(ErrorHandler);
+  addPlatform() {
+    let hasError: boolean = false;
+    if (this.name === '') {
+      this.errorName = $localize`:@@platform.add.name.error:Vous devez renseigner un nom`;
+      hasError = true;
+    } else {
+      this.errorName = '';
+    }
 
-  addForm = new FormGroup({
-    name: new FormControl(null, [Validators.required, Validators.maxLength(100)])
-  }, { updateOn: 'submit' });
-
-  getMessage(key: string, details?: any) {
-    const messages: Record<string, string> = {
-      created: $localize`:@@platform.create.success:Platform was created successfully.`
-    };
-    return messages[key];
-  }
-
-  handleSubmit() {
-    window.scrollTo(0, 0);
-    this.addForm.markAllAsTouched();
-    if (!this.addForm.valid) {
+    if (hasError) {
       return;
     }
-    const data = new PlatformDTO(this.addForm.value);
-    this.platformService.createPlatform(data)
-        .subscribe({
-          next: () => this.router.navigate(['/platforms'], {
-            state: {
-              msgSuccess: this.getMessage('created')
-            }
-          }),
-          error: (error) => this.errorHandler.handleServerError(error.error, this.addForm, this.getMessage)
-        });
-  }
+    
+    const data = new PlatformDTO({
+      name: this.name
+    });
 
+    this.platformService.createPlatform(data)
+      .subscribe({
+        next: () => {
+          this.notif.showSuccess(
+            $localize`:@@platform.add.success.title:Plateforme ajoutée !`,
+            $localize`:@@platform.add.success.text:Elle sera désormais visible dans la liste.`,
+          );
+          this.savePlatform.emit();
+          this.visible = false;
+        },
+        error: () => this.errorMessage = $localize`:@@platform.add.error:Une erreur est survenue !`
+      });
+  }
 }

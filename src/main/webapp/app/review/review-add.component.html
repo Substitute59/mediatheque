@@ -1,14 +1,14 @@
 <p-button severity="contrast" (click)="visible = true" i18n="@@media.details.review.add">Ajouter ma review</p-button>
 <p-dialog i18n-header="@@media.details.review.add" header="Ajouter ma review" [modal]="true" [(visible)]="visible" [style]="{ width: '25rem' }">
     <div class="flex flex-col gap-4 mb-6">
-        <label for="rating" class="font-semibold w-24" i18n="@@media.review.add.rating">Ma note*</label>
+        <label for="rating" class="font-semibold" i18n="@@media.review.add.rating">Ma note*</label>
         <p-rating [(ngModel)]="rating" />
         @if (errorRating !== '') {
             <p class="w-full text-sm text-red-500">{{ errorRating }}</p>
         }
     </div>
     <div class="flex flex-col gap-4 mb-8">
-        <label for="comment" class="font-semibold w-24" i18n="@@media.review.add.comment">Commentaire*</label>
+        <label for="comment" class="font-semibold" i18n="@@media.review.add.comment">Commentaire*</label>
         <textarea rows="5" cols="30" pTextarea [(ngModel)]="comment"></textarea>
         @if (errorComment !== '') {
             <p class="w-full text-sm text-red-500">{{ errorComment }}</p>

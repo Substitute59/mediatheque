@@ -1,5 +1,5 @@
 import { Component, input, Output, EventEmitter } from '@angular/core';
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ReviewService } from './review.service';
 import { ReviewDTO } from './review.model';
@@ -35,8 +35,7 @@ export class ReviewAddComponent {
   
   constructor(
     private reviewService: ReviewService,
-    private notif: NotificationService,
-    private location: Location
+    private notif: NotificationService
   ) {}
 
   addReview() {
@@ -76,7 +75,7 @@ export class ReviewAddComponent {
           this.saveReview.emit();
           this.visible = false;
         },
-        error: (error) => this.errorMessage = $localize`:@@review.add.error:Une erreur est survenue !`
+        error: () => this.errorMessage = $localize`:@@review.add.error:Une erreur est survenue !`
       });
   }
 }

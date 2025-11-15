@@ -65,4 +65,13 @@ export class MediaService {
         .pipe(map(transformRecordToArray));
   }
 
+  getMediaMediaArtistsValues() {
+    return this.http.get<Record<string, string>>(this.resourcePath + '/mediaMediaArtistsValues')
+        .pipe(map(transformRecordToArray));
+  }
+
+  getMediaMediaCollectionsValues() {
+    return this.http.get<Record<string, string>>(this.resourcePath + '/mediaMediaCollectionsValues')
+        .pipe(map(transformRecordToArray));
+  }
 }

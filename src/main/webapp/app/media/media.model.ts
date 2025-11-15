@@ -66,6 +66,7 @@ export class MediaDTO {
     id?: number | null;
     type?: string | null;
     position?: number | null;
+    collection?: number | null;
   }[] | null;
 
   mediaReviews?: {

@@ -6,6 +6,8 @@ import com.mediatheque.mediatheque.model.TagDTO;
 import com.mediatheque.mediatheque.repos.TagRepository;
 import com.mediatheque.mediatheque.util.CustomCollectors;
 import com.mediatheque.mediatheque.util.NotFoundException;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.springframework.context.ApplicationEventPublisher;
@@ -44,6 +46,18 @@ public class TagService {
         final Tag tag = new Tag();
         mapToEntity(tagDTO, tag);
         return tagRepository.save(tag).getId();
+    }
+
+    public List<Integer> createMany(List<TagDTO> tagDTOList) {
+        List<Integer> ids = new ArrayList<>();
+
+        for (TagDTO dto : tagDTOList) {
+            Tag tag = new Tag();
+            mapToEntity(dto, tag);
+            ids.add(tagRepository.save(tag).getId());
+        }
+
+        return ids;
     }
 
     public void update(final Integer id, final TagDTO tagDTO) {

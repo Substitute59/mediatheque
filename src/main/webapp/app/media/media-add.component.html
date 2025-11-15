@@ -4,7 +4,11 @@
 
             <!-- Header -->
             <div class="flex flex-wrap mb-4">
-                <h1 class="grow text-3xl md:text-4xl font-medium mb-2" i18n="@@media.add.headline">Ajouter un média</h1>
+                @if (currentId) {
+                    <h1 class="grow text-3xl md:text-4xl font-medium mb-2" i18n="@@media.edit.headline">Modifier un média</h1>
+                } @else {
+                    <h1 class="grow text-3xl md:text-4xl font-medium mb-2" i18n="@@media.add.headline">Ajouter un média</h1>
+                }
                 <div>
                     <a routerLink="/medias"
                        class="inline-block text-white bg-gray-500 hover:bg-gray-600 focus:ring-gray-200 focus:ring-4 rounded px-5 py-2"
@@ -18,6 +22,47 @@
             <div class="flex flex-col gap-2 w-full">
                 <label class="font-medium" i18n="@@media.title.label">Titre*</label>
                 <input pInputText formControlName="title" class="w-full px-3 py-2 shadow-sm rounded-lg" />
+                @if (errorField === 'title' && errorMessage) {
+                    <p class="text-sm text-red-500 mt-2">{{ errorMessage }}</p>
+                }
+            </div>
+
+            <!-- Artists -->
+            <div class="flex flex-col gap-2">
+                <label class="font-medium" i18n="@@media.mediaMediaArtists.label">Artiste(s)</label>
+                <p-multiselect 
+                    [options]="mediaMediaArtistsValues"
+                    formControlName="mediaMediaArtists"
+                    optionLabel="label"
+                    placeholder="Sélectionner"></p-multiselect>
+                <app-artist-add (saveArtist)="loadArtists()" />
+            </div>
+
+            <!-- Tags -->
+            <div class="flex flex-col gap-2">
+                <label class="font-medium" i18n="@@media.mediaMediaCollections.label">Collection(s)</label>
+                <p-select 
+                    [options]="mediaMediaCollectionsValues"
+                    formControlName="mediaMediaCollections"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Sélectionner"></p-select>
+                <app-collection-add (saveCollection)="loadCollections()" />
+                <div class="flex gap-2">
+                    <input
+                        pInputText
+                        formControlName="collectionType"
+                        class="w-full px-3 py-2 shadow-sm rounded-lg"
+                        placeholder="Type : tome, volume, épisode, ..."
+                        i18n-placeholder="@@media.add.collection.type"
+                    />
+                    <p-inputnumber
+                        formControlName="collectionPosition"
+                        class="w-full"
+                        placeholder="Position dans la collection : 1, 2, 3, ..."
+                        i18n-placeholder="@@media.add.collection.position"
+                    />
+                </div>
             </div>
 
             <!-- Description -->
@@ -53,16 +98,23 @@
                         }
                     </ng-template>
                 </p-fileupload>
+
+                @if (coverUrl) {
+                    <img class="w-50" [src]="environment.apiPath + '/uploads/' + coverUrl" alt="Photo de couverture" i18n-alt="@@media.add.form.coverUrl.alt">
+                }
             </div>
 
             <!-- Media Type -->
             <div class="flex flex-col gap-2">
-                <label class="font-medium" i18n="@@media.mediaType.label">Type de média</label>
+                <label class="font-medium" i18n="@@media.mediaType.label">Type de média*</label>
                 <p-select [options]="mediaTypeValues"
                     formControlName="mediaType"
                     optionLabel="label"
                     optionValue="value"
                     placeholder="Sélectionner"></p-select>
+                @if (errorField === 'mediaType' && errorMessage) {
+                    <p class="text-sm text-red-500 mt-2">{{ errorMessage }}</p>
+                }
             </div>
 
             <!-- Genre -->
@@ -75,6 +127,10 @@
                         optionValue="value"
                         placeholder="Sélectionner"></p-select>
                 </div>
+                <app-genre-add
+                    [mediaTypeId]="addMediaForm.value.mediaType"
+                    (saveGenre)="updateGenresList()"
+                />
             }
 
             <!-- Platform -->
@@ -87,6 +143,7 @@
                         optionValue="value"
                         placeholder="Sélectionner"></p-select>
                 </div>
+                <app-platform-add (savePlatform)="loadPlatforms()" />
             }
 
             <!-- Tags -->
@@ -98,11 +155,16 @@
                     optionLabel="label"
                     placeholder="Sélectionner"></p-multiselect>
             </div>
+            <app-tag-add (saveTag)="loadTags()" />
 
             <!-- Submit -->
             <button pButton class="w-full py-2 rounded-lg flex justify-center items-center gap-2">
                 <i class="pi pi-check"></i>
-                <span i18n="@@media.add.headline">Ajouter</span>
+                @if (currentId) {
+                    <span i18n="@@media.edit.headline">Modifier</span>
+                } @else {
+                    <span i18n="@@media.add.headline">Ajouter</span>
+                }
             </button>
 
         </div>

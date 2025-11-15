@@ -34,6 +34,10 @@ public class MediaDTO {
 
     private List<Integer> mediaTagTags;
 
+    private List<Integer> mediaMediaArtists;
+
+    private MediaCollectionDTO mediaMediaCollections;
+
     public Integer getId() {
         return id;
     }
@@ -120,6 +124,22 @@ public class MediaDTO {
 
     public void setMediaTagTags(final List<Integer> mediaTagTags) {
         this.mediaTagTags = mediaTagTags;
+    }
+    
+    public List<Integer> getMediaMediaArtists() {
+        return mediaMediaArtists;
+    }
+
+    public void setMediaMediaArtists(final List<Integer> mediaMediaArtists) {
+        this.mediaMediaArtists = mediaMediaArtists;
+    }
+
+    public MediaCollectionDTO getMediaMediaCollections() {
+        return mediaMediaCollections;
+    }
+
+    public void setMediaMediaCollections(final MediaCollectionDTO mediaMediaCollections) {
+        this.mediaMediaCollections = mediaMediaCollections;
     }
 
 }

@@ -2,6 +2,7 @@ package com.mediatheque.mediatheque.service;
 
 import com.mediatheque.mediatheque.domain.Genre;
 import com.mediatheque.mediatheque.domain.Media;
+import com.mediatheque.mediatheque.domain.MediaArtist;
 import com.mediatheque.mediatheque.domain.MediaType;
 import com.mediatheque.mediatheque.domain.Platform;
 import com.mediatheque.mediatheque.domain.Tag;
@@ -18,6 +19,7 @@ import com.mediatheque.mediatheque.model.CollectionDTO;
 import com.mediatheque.mediatheque.model.CompleteMediaDTO;
 import com.mediatheque.mediatheque.model.FlagDTO;
 import com.mediatheque.mediatheque.model.GenreDTO;
+import com.mediatheque.mediatheque.model.MediaArtistDTO;
 import com.mediatheque.mediatheque.model.MediaCollectionDTO;
 import com.mediatheque.mediatheque.model.MediaDTO;
 import com.mediatheque.mediatheque.model.MediaTypeDTO;
@@ -25,9 +27,9 @@ import com.mediatheque.mediatheque.model.PlatformDTO;
 import com.mediatheque.mediatheque.model.ReviewDTO;
 import com.mediatheque.mediatheque.model.TagDTO;
 import com.mediatheque.mediatheque.model.UserDTO;
-import com.mediatheque.mediatheque.model.UserMediaDTO;
 import com.mediatheque.mediatheque.repos.GenreRepository;
 import com.mediatheque.mediatheque.repos.MediaRepository;
+import com.mediatheque.mediatheque.repos.MediaArtistRepository;
 import com.mediatheque.mediatheque.repos.MediaTypeRepository;
 import com.mediatheque.mediatheque.repos.PlatformRepository;
 import com.mediatheque.mediatheque.repos.TagRepository;
@@ -45,6 +47,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.context.ApplicationEventPublisher;
@@ -54,14 +57,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class MediaService {
 
+    private final MediaArtistService mediaArtistService;
+
+    private final MediaCollectionService mediaCollectionService;
+
     private final UserMediaRepository userMediaRepository;
 
     private final MediaRepository mediaRepository;
+    private final MediaArtistRepository mediaArtistRepository;
     private final MediaTypeRepository mediaTypeRepository;
     private final GenreRepository genreRepository;
     private final PlatformRepository platformRepository;
@@ -73,8 +80,10 @@ public class MediaService {
             final MediaTypeRepository mediaTypeRepository, final GenreRepository genreRepository,
             final PlatformRepository platformRepository, final UserRepository userRepository,
             final TagRepository tagRepository, final ApplicationEventPublisher publisher,
-            final UserMediaRepository userMediaRepository) {
+            final UserMediaRepository userMediaRepository, final MediaCollectionService mediaCollectionService,
+            final MediaArtistService mediaArtistService, final MediaArtistRepository mediaArtistRepository) {
         this.mediaRepository = mediaRepository;
+        this.mediaArtistRepository = mediaArtistRepository;
         this.mediaTypeRepository = mediaTypeRepository;
         this.genreRepository = genreRepository;
         this.platformRepository = platformRepository;
@@ -82,6 +91,8 @@ public class MediaService {
         this.userRepository = userRepository;
         this.tagRepository = tagRepository;
         this.publisher = publisher;
+        this.mediaCollectionService = mediaCollectionService;
+        this.mediaArtistService = mediaArtistService;
     }
 
     public List<MediaDTO> findAll() {
@@ -98,9 +109,16 @@ public class MediaService {
                 .toList();
     }
 
-    public MediaDTO get(final Integer id) {
+    public CompleteMediaDTO get(final Integer id) {
         return mediaRepository.findById(id)
-                .map(media -> mapToDTO(media, new MediaDTO()))
+                .map(media -> {
+                    UserMedia userMedia = userMediaRepository.findFirstByMediaId(id);
+                        if (userMedia == null) {
+                            userMedia = new UserMedia();
+                            userMedia.setMedia(media);
+                        }
+                        return userMediaToCompleteMediaDTO(userMedia);
+                })
                 .orElseThrow(NotFoundException::new);
     }
 
@@ -134,7 +152,23 @@ public class MediaService {
             media.setCoverUrl(fileName);
         }
 
-        return mediaRepository.save(media).getId();
+        final Integer newMediaId = mediaRepository.save(media).getId();
+
+        if (mediaDTO.getMediaMediaCollections() != null) {
+            mediaDTO.getMediaMediaCollections().setMedia(newMediaId);
+            mediaCollectionService.create(mediaDTO.getMediaMediaCollections());
+        }
+
+        if (mediaDTO.getMediaMediaArtists() != null && !mediaDTO.getMediaMediaArtists().isEmpty()) {
+            for (Integer artistId : mediaDTO.getMediaMediaArtists()) {
+                MediaArtistDTO mediaArtistDTO = new MediaArtistDTO();
+                mediaArtistDTO.setMedia(newMediaId);
+                mediaArtistDTO.setArtist(artistId);
+                mediaArtistService.create(mediaArtistDTO);
+            }
+        }
+
+        return newMediaId;
     }
 
     public void update(final Integer id, final MediaDTO mediaDTO, final MultipartFile coverFile) throws IOException {
@@ -158,6 +192,31 @@ public class MediaService {
             Files.createDirectories(uploadPath);
             Files.copy(coverFile.getInputStream(), uploadPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
             media.setCoverUrl(fileName);
+        }
+
+        if (mediaDTO.getMediaMediaCollections() != null) {
+            mediaDTO.getMediaMediaCollections().setMedia(id);
+            mediaCollectionService.update(mediaDTO.getMediaMediaCollections().getId(), mediaDTO.getMediaMediaCollections());
+        }
+
+        if (mediaDTO.getMediaMediaArtists() != null && !mediaDTO.getMediaMediaArtists().isEmpty()) {
+            Set<Integer> newArtistIds = new HashSet<>(mediaDTO.getMediaMediaArtists());
+            List<MediaArtist> existing = mediaArtistRepository.findAllByMediaId(id);
+
+            for (MediaArtist ma : existing) {
+                if (!newArtistIds.contains(ma.getArtist().getId())) {
+                    mediaArtistRepository.delete(ma);
+                } else {
+                    newArtistIds.remove(ma.getArtist().getId());
+                }
+            }
+
+            for (Integer artistId : newArtistIds) {
+                MediaArtistDTO dto = new MediaArtistDTO();
+                dto.setMedia(id);
+                dto.setArtist(artistId);
+                mediaArtistService.create(dto);
+            }
         }
 
         mediaRepository.save(media);

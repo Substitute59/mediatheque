@@ -38,9 +38,11 @@ public class TagResource {
     }
 
     @PostMapping
-    public ResponseEntity<Integer> createTag(@RequestBody @Valid final TagDTO tagDTO) {
-        final Integer createdId = tagService.create(tagDTO);
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
+    public ResponseEntity<List<Integer>> createTags(
+        @RequestBody @Valid final List<@Valid TagDTO> tagDTOList) {
+
+        List<Integer> createdIds = tagService.createMany(tagDTOList);
+        return new ResponseEntity<>(createdIds, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")

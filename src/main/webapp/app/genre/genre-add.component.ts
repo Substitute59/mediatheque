@@ -1,62 +1,69 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
-import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
-import { InputRowComponent } from 'app/common/input-row/input-row.component';
-import { GenreService } from 'app/genre/genre.service';
-import { GenreDTO } from 'app/genre/genre.model';
-import { ErrorHandler } from 'app/common/error-handler.injectable';
-
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { GenreService } from './genre.service';
+import { GenreDTO } from './genre.model';
+import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { RatingModule } from 'primeng/rating';
+import { NotificationService } from '../notification/notification.service';
 
 @Component({
   selector: 'app-genre-add',
-  imports: [CommonModule, RouterLink, ReactiveFormsModule, InputRowComponent],
+  imports: [
+    CommonModule,
+    ButtonModule,
+    DialogModule,
+    InputTextModule,
+    RatingModule,
+    ReactiveFormsModule,
+    FormsModule
+  ],
   templateUrl: './genre-add.component.html'
 })
-export class GenreAddComponent implements OnInit {
+export class GenreAddComponent {
+  visible: boolean = false;
+  name: string = '';
+  errorName: string = '';
+  errorMessage: string = '';
+  mediaTypeId = input<number>();
+  @Output() saveGenre = new EventEmitter<void>();
+  
+  constructor(
+    private genreService: GenreService,
+    private notif: NotificationService
+  ) {}
 
-  genreService = inject(GenreService);
-  router = inject(Router);
-  errorHandler = inject(ErrorHandler);
+  addGenre() {
+    let hasError: boolean = false;
+    if (this.name === '') {
+      this.errorName = $localize`:@@genre.add.name.error:Vous devez renseigner un nom`;
+      hasError = true;
+    } else {
+      this.errorName = '';
+    }
 
-  mediaTypeValues?: Map<number,string>;
-
-  addForm = new FormGroup({
-    name: new FormControl(null, [Validators.required, Validators.maxLength(100)]),
-    mediaType: new FormControl(null, [Validators.required])
-  }, { updateOn: 'submit' });
-
-  getMessage(key: string, details?: any) {
-    const messages: Record<string, string> = {
-      created: $localize`:@@genre.create.success:Genre was created successfully.`
-    };
-    return messages[key];
-  }
-
-  ngOnInit() {
-    this.genreService.getMediaTypeValues()
-        .subscribe({
-          next: (data) => this.mediaTypeValues = data,
-          error: (error) => this.errorHandler.handleServerError(error.error)
-        });
-  }
-
-  handleSubmit() {
-    window.scrollTo(0, 0);
-    this.addForm.markAllAsTouched();
-    if (!this.addForm.valid) {
+    if (hasError) {
       return;
     }
-    const data = new GenreDTO(this.addForm.value);
-    this.genreService.createGenre(data)
-        .subscribe({
-          next: () => this.router.navigate(['/genres'], {
-            state: {
-              msgSuccess: this.getMessage('created')
-            }
-          }),
-          error: (error) => this.errorHandler.handleServerError(error.error, this.addForm, this.getMessage)
-        });
-  }
+    
+    const data = new GenreDTO({
+      name: this.name,
+      mediaType: this.mediaTypeId(),
+    });
 
+    this.genreService.createGenre(data)
+      .subscribe({
+        next: () => {
+          this.notif.showSuccess(
+            $localize`:@@genre.add.success.title:Genre ajouté !`,
+            $localize`:@@genre.add.success.text:Il sera désormais visible dans la liste.`,
+          );
+          this.saveGenre.emit();
+          this.visible = false;
+        },
+        error: () => this.errorMessage = $localize`:@@genre.add.error:Une erreur est survenue !`
+      });
+  }
 }

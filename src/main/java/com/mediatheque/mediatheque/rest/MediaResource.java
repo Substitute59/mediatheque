@@ -1,7 +1,8 @@
 package com.mediatheque.mediatheque.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mediatheque.mediatheque.model.MediaDTO;
+import com.mediatheque.mediatheque.service.ArtistService;
+import com.mediatheque.mediatheque.service.CollectionService;
 import com.mediatheque.mediatheque.service.GenreService;
 import com.mediatheque.mediatheque.service.MediaService;
 import com.mediatheque.mediatheque.service.MediaTypeService;
@@ -14,7 +15,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -37,18 +36,21 @@ public class MediaResource {
 
     private final MediaService mediaService;
     private final MediaTypeService mediaTypeService;
+    private final ArtistService artistService;
+    private final CollectionService collectionService;
     private final GenreService genreService;
     private final PlatformService platformService;
     private final UserService userService;
     private final TagService tagService;
-    @Autowired
-    private ObjectMapper objectMapper;
 
     public MediaResource(final MediaService mediaService, final MediaTypeService mediaTypeService,
             final GenreService genreService, final PlatformService platformService,
-            final UserService userService, final TagService tagService) {
+            final UserService userService, final TagService tagService,
+            final ArtistService artistService, final CollectionService collectionService) {
         this.mediaService = mediaService;
         this.mediaTypeService = mediaTypeService;
+        this.artistService = artistService;
+        this.collectionService = collectionService;
         this.genreService = genreService;
         this.platformService = platformService;
         this.userService = userService;
@@ -122,6 +124,16 @@ public class MediaResource {
     @GetMapping("/mediaTagTagsValues")
     public ResponseEntity<Map<Integer, String>> getMediaTagTagsValues() {
         return ResponseEntity.ok(tagService.getTagValues());
+    }
+
+    @GetMapping("/mediaMediaArtistsValues")
+    public ResponseEntity<Map<Integer, String>> getMediaMediaArtistsValues() {
+        return ResponseEntity.ok(artistService.getArtistValues());
+    }
+
+    @GetMapping("/mediaMediaCollectionsValues")
+    public ResponseEntity<Map<Integer, String>> getMediaMediaCollectionsValues() {
+        return ResponseEntity.ok(collectionService.getCollectionValues());
     }
 
 }
