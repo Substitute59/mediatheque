@@ -24,25 +24,25 @@ export const routes: Routes = [
     title: $localize`:@@user.edit.headline:Edit User`
   },
   {
-    path: 'medias',
+    path: 'collection',
     component: MediaListComponent,
     canActivate: [authGuard],
     title: $localize`:@@media.list.headline:Medias`
   },
   {
-    path: 'media/:id',
+    path: 'collection/view/:id',
     component: MediaDetailsComponent,
     canActivate: [authGuard],
     title: $localize`:@@media.list.headline:Media Details`
   },
   {
-    path: 'medias/add',
+    path: 'collection/add',
     component: MediaAddComponent,
     canActivate: [authGuard],
     title: $localize`:@@media.add.headline:Add Media`
   },
   {
-    path: 'medias/edit/:id',
+    path: 'collection/edit/:id',
     component: MediaAddComponent,
     canActivate: [authGuard],
     title: $localize`:@@media.edit.headline:Edit Media`

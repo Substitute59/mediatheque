@@ -87,7 +87,10 @@ export class MediaAddComponent {
     if (this.currentId) {
       this.mediaService.getMedia(this.currentId, this.auth.currentUserValue?.id!)
         .subscribe({
-          next: (data) => this.media = data,
+          next: (data) => {
+            this.media = data;
+            this.updateForm();
+          },
           error: (error) => this.errorHandler.handleServerError(error.error)
         });
     }
@@ -291,7 +294,7 @@ export class MediaAddComponent {
               $localize`:@@media.edit.success.text:Vous pourrez le retrouver dans votre médiathèque.`
             );
             setTimeout(() => {
-              this.router.navigate(['/medias']);
+              this.router.navigate(['/collection']);
             }, 3000);
           },
           error: () => this.errorMessage = $localize`:@@media.edit.error:Une erreur est survenue lors de la mise à jour.`
@@ -320,7 +323,7 @@ export class MediaAddComponent {
               error: () => this.errorMessage = $localize`:@@media.add.error:Une erreur est survenue lors de l'ajout.`
             });
           setTimeout(() => {
-            this.router.navigate(['/medias']);
+            this.router.navigate(['/collection']);
           }, 3000);
         },
         error: () => this.errorMessage = $localize`:@@media.add.error:Une erreur est survenue lors de l'ajout.`

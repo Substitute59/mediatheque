@@ -31,7 +31,7 @@ export class HeaderComponent {
     this.items = [
       {
         label: $localize`:@@header.menu.mediatheque:Ma médiathèque`,
-        routerLink: '/medias',
+        routerLink: '/collection',
         routerLinkActiveOptions: { 
           exact: true,
           queryParams: 'exact'
@@ -39,7 +39,7 @@ export class HeaderComponent {
       },
       {
         label: $localize`:@@header.menu.wishlist:Ma wishlist`,
-        routerLink: ['/medias'],
+        routerLink: ['/collection'],
         queryParams: { flagId: 2 },
         routerLinkActiveOptions: { 
           exact: true,

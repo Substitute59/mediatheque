@@ -111,7 +111,7 @@
                     </div>
                     <div class="flex items-center gap-1">
                         @if (mediaUtilsService.isCreatedByCurrentUser(media)) {
-                            <a [routerLink]="['/medias/edit', media.id]" pButton icon="pi pi-pen-to-square" [rounded]="true" [text]="true"></a>
+                            <a [routerLink]="['/collection/edit', media.id]" pButton icon="pi pi-pen-to-square" [rounded]="true" [text]="true"></a>
                         }
                         @if (media.inUserMediaLibrary && (media.flag?.id === 3 || media.flag?.id === 1)) {
                             <p-button (onClick)="updateStatus(media)" [icon]="getLoanIcon(media)" [rounded]="true" [text]="true" />
