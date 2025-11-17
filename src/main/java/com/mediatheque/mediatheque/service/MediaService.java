@@ -102,8 +102,24 @@ public class MediaService {
                 .toList();
     }
 
-    public List<CompleteMediaDTO> findAllByUserId(Integer userId) {
+    public List<CompleteMediaDTO> findAllByUserId(Integer userId, Boolean isSearch) {
+        if (isSearch) {
+            final List<Media> medias = mediaRepository.findAll(Sort.by("id"));
+
+            return medias.stream()
+                .map(media -> {
+                    UserMedia userMedia = userMediaRepository.findFirstByMediaId(media.getId());
+                        if (userMedia == null) {
+                            userMedia = new UserMedia();
+                            userMedia.setMedia(media);
+                        }
+                        return userMediaToCompleteMediaDTO(userMedia);
+                })
+                .toList();
+        }
+
         final List<UserMedia> userMedias = userMediaRepository.findByUserId(userId);
+
         return userMedias.stream()
                 .map(userMedia -> userMediaToCompleteMediaDTO(userMedia))
                 .toList();

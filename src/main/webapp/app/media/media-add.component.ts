@@ -8,6 +8,8 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
 import { ToastModule } from 'primeng/toast';
+import { BlockUIModule } from 'primeng/blockui';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { NotificationService } from '../notification/notification.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
@@ -26,6 +28,7 @@ import { TagAddComponent } from '../tag/tag-add.component';
 import { CollectionAddComponent } from '../collection/collection-add.component';
 import { ArtistAddComponent } from '../artist/artist-add.component';
 import { environment } from 'environments/environment';
+import { finalize } from 'rxjs/operators';
 
 interface UploadEvent {
   originalEvent: Event;
@@ -45,6 +48,8 @@ interface UploadEvent {
     MultiSelectModule,
     SelectModule,
     ToastModule,
+    BlockUIModule,
+    ProgressSpinnerModule,
     RouterLink,
     GenreAddComponent,
     PlatformAddComponent,
@@ -71,6 +76,7 @@ export class MediaAddComponent {
   coverUrl?: string;
   environment = environment;
   media?: MediaDTO;
+  loading:boolean = false;
 
   constructor(
     private auth: AuthService,
@@ -85,7 +91,9 @@ export class MediaAddComponent {
   ) {
     this.currentId = +this.route.snapshot.params['id'];
     if (this.currentId) {
+      this.loading = true;
       this.mediaService.getMedia(this.currentId, this.auth.currentUserValue?.id!)
+        .pipe(finalize(() => this.loading = false))
         .subscribe({
           next: (data) => {
             this.media = data;
@@ -284,6 +292,8 @@ export class MediaAddComponent {
         dto.mediaMediaCollections.id = this.media.mediaMediaCollections[0].id;
       }
     }
+
+    this.loading = true;
 
     if (this.currentId) {
       this.mediaService.updateMedia(this.currentId, dto, this.selectedCover)

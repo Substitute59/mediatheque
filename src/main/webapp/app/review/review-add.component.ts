@@ -7,7 +7,10 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { TextareaModule } from 'primeng/textarea';
 import { RatingModule } from 'primeng/rating';
+import { BlockUIModule } from 'primeng/blockui';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { NotificationService } from '../notification/notification.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-review-add',
@@ -17,6 +20,8 @@ import { NotificationService } from '../notification/notification.service';
     DialogModule,
     TextareaModule,
     RatingModule,
+    BlockUIModule,
+    ProgressSpinnerModule,
     ReactiveFormsModule,
     FormsModule
   ],
@@ -29,6 +34,7 @@ export class ReviewAddComponent {
   errorRating: string = '';
   errorComment: string = '';
   errorMessage: string = '';
+  loading:boolean = false;
   mediaId = input<number>();
   userId = input<number>();
   @Output() saveReview = new EventEmitter<void>();
@@ -65,7 +71,10 @@ export class ReviewAddComponent {
       user: this.userId()
     });
 
+    this.loading = true;
+
     this.reviewService.createReview(data)
+      .pipe(finalize(() => this.loading = false))
       .subscribe({
         next: () => {
           this.notif.showSuccess(

@@ -7,12 +7,15 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ToastModule } from 'primeng/toast';
+import { BlockUIModule } from 'primeng/blockui';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { UserService } from './user.service';
 import { AuthService } from '../auth/auth.service';
 import { UserEditSchema } from './user.schema';
 import { environment } from 'environments/environment';
 import { take } from 'rxjs/operators';
 import { NotificationService } from '../notification/notification.service';
+import { finalize } from 'rxjs/operators';
 
 interface UploadEvent {
   originalEvent: Event;
@@ -28,7 +31,9 @@ interface UploadEvent {
     CheckboxModule,
     InputTextModule,
     FileUploadModule,
-    ToastModule
+    ToastModule,
+    BlockUIModule,
+    ProgressSpinnerModule
   ],
   templateUrl: './user-edit.component.html'
 })
@@ -39,6 +44,7 @@ export class UserEditComponent {
   errorMessage: string = '';
   user$ = this.auth.currentUser
   environment = environment
+  loading:boolean = false;
 
   constructor(
     private userService: UserService,
@@ -92,20 +98,24 @@ export class UserEditComponent {
       formData.append('avatar', avatar, avatar.name);
     }
 
-    this.userService.updateUser(this.currentId!, formData).subscribe({
-      next: () => {
-        this.auth.login(this.userEditForm.value.username, this.userEditForm.value.password).subscribe({
-          next: () => {
-            this.errorMessage = $localize`:@@userEditSuccessMsg:Vos nouvelles informations ont bien été enregistrées !`;
-            this.errorField = '';
-            this.notif.showSuccess($localize`:@@userEditSuccessTitle:Mise à jour réussie !`, this.errorMessage);
-          }
-        });
-      },
-      error: () => {
-        this.errorMessage = $localize`:@@userEditError:Une erreur est survenue !`;
-        this.errorField = '';
-      }
-    });
+    this.loading = true;
+
+    this.userService.updateUser(this.currentId!, formData)
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: () => {
+          this.auth.login(this.userEditForm.value.username, this.userEditForm.value.password).subscribe({
+            next: () => {
+              this.errorMessage = $localize`:@@userEditSuccessMsg:Vos nouvelles informations ont bien été enregistrées !`;
+              this.errorField = '';
+              this.notif.showSuccess($localize`:@@userEditSuccessTitle:Mise à jour réussie !`, this.errorMessage);
+            }
+          });
+        },
+        error: () => {
+          this.errorMessage = $localize`:@@userEditError:Une erreur est survenue !`;
+          this.errorField = '';
+        }
+      });
   }
 }

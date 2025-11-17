@@ -58,9 +58,12 @@ public class MediaResource {
     }
 
     @GetMapping
-    public ResponseEntity<List<?>> getAllMedias(@RequestParam(required = false) Integer userId) {
+    public ResponseEntity<List<?>> getAllMedias(
+        @RequestParam(name = "userId", required = false) Integer userId,
+        @RequestParam(name = "isSearch") Boolean isSearch
+    ) {
         if (userId != null) {
-            return ResponseEntity.ok(mediaService.findAllByUserId(userId));
+            return ResponseEntity.ok(mediaService.findAllByUserId(userId, isSearch));
         }
         return ResponseEntity.ok(mediaService.findAll());
     }

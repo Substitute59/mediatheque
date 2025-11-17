@@ -48,6 +48,18 @@ export const routes: Routes = [
     title: $localize`:@@media.edit.headline:Edit Media`
   },
   {
+    path: 'search',
+    component: MediaListComponent,
+    canActivate: [authGuard],
+    title: $localize`:@@media.list.headline:Search`
+  },
+  {
+    path: 'search/:q',
+    component: MediaListComponent,
+    canActivate: [authGuard],
+    title: $localize`:@@media.list.headline:Search`
+  },
+  {
     path: 'error',
     component: ErrorComponent,
     title: $localize`:@@error.page.headline:Error`

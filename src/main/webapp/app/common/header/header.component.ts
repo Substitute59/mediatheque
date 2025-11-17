@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { MenubarModule } from 'primeng/menubar';
 import { MenuItem } from 'primeng/api';
 import { BadgeModule } from 'primeng/badge';
@@ -18,7 +19,9 @@ import { environment } from 'environments/environment';
     BadgeModule,
     AvatarModule,
     InputTextModule,
-    RouterLink
+    RouterLink,
+    ReactiveFormsModule,
+    FormsModule
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
@@ -26,8 +29,9 @@ import { environment } from 'environments/environment';
 export class HeaderComponent {
   environment = environment
   items: MenuItem[] | undefined;
+  q: string = '';
 
-  constructor(private auth: AuthService) {
+  constructor(private auth: AuthService, private router: Router) {
     this.items = [
       {
         label: $localize`:@@header.menu.mediatheque:Ma médiathèque`,
@@ -45,11 +49,23 @@ export class HeaderComponent {
           exact: true,
           queryParams: 'exact'
         }
+      },
+      {
+        label: $localize`:@@header.menu.wishlist:Tous les médias`,
+        routerLink: ['/search'],
+        routerLinkActiveOptions: { 
+          exact: true,
+          queryParams: 'exact'
+        }
       }
     ]
   }
 
   user$ = this.auth.currentUser
+
+  search() {
+    this.router.navigate(['/search/' + this.q]);
+  }
 
   logout() {
     this.auth.logout();

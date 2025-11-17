@@ -15,11 +15,13 @@
                         severity="contrast"
                         class="absolute left-3 top-3 !font-medium"
                     />
-                    <p-tag
-                        [value]="media.flag?.name!"
-                        [ngStyle]="{'background-color': media.flag?.color, 'color': 'white'}"
-                        class="absolute right-3 top-3 !font-medium"
-                    />
+                    @if (media.flag?.name) {
+                        <p-tag
+                            [value]="media.flag?.name!"
+                            [ngStyle]="{'background-color': media.flag?.color, 'color': 'white'}"
+                            class="absolute right-3 top-3 !font-medium"
+                        />
+                    }
                 </div>
             </ng-template>
 
@@ -117,7 +119,7 @@
                             <p-button (onClick)="updateStatus(media)" [icon]="getLoanIcon(media)" [rounded]="true" [text]="true" />
                             <p-button (onClick)="confirmDelete($event, media)" icon="pi pi-trash" [rounded]="true" [text]="true" />
                         }
-                        @if (!media.flag?.id || media.flag?.id === 2) {
+                        @if (!media.inUserMediaLibrary || !media.flag?.id || media.flag?.id === 2) {
                             <p-button (onClick)="toggleFromMyWishlist(media)" [icon]="getWishlistIcon(media)" [rounded]="true" [text]="true" />
                             <p-button (onClick)="addToMyMediaLibrary(media)" icon="pi pi-plus" [rounded]="true" [text]="true" />
                         }
@@ -143,3 +145,6 @@
 </div>
 <p-confirmdialog />
 <p-toast />
+<p-blockUI [blocked]="loading">
+    <p-progressSpinner></p-progressSpinner>
+</p-blockUI>

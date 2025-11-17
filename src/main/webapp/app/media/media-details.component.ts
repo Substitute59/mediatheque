@@ -14,9 +14,12 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DividerModule } from 'primeng/divider';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
+import { BlockUIModule } from 'primeng/blockui';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ConfirmationService } from 'primeng/api';
 import { environment } from 'environments/environment';
 import { ReviewAddComponent } from '../review/review-add.component';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-media-details',
@@ -29,6 +32,8 @@ import { ReviewAddComponent } from '../review/review-add.component';
     TagModule,
     ButtonModule,
     ToastModule,
+    BlockUIModule,
+    ProgressSpinnerModule,
     RouterLink,
     ReviewAddComponent
   ],
@@ -43,6 +48,7 @@ export class MediaDetailsComponent {
   errorMessage?: string;
   myReview?: ReviewDTO;
   environment = environment;
+  loading:boolean = false;
 
   constructor(
     private mediaService: MediaService,
@@ -61,8 +67,10 @@ export class MediaDetailsComponent {
   }
 
   loadMedia() {
+    this.loading = true;
     this.currentId = +this.route.snapshot.params['id'];
     this.mediaService.getMedia(this.currentId, this.auth.currentUserValue?.id!)
+      .pipe(finalize(() => this.loading = false))
       .subscribe({
         next: (data: MediaDTO) => {
           this.media = data;
@@ -86,9 +94,12 @@ export class MediaDetailsComponent {
 
   errorFunction(errorMessage: string) {
     this.errorMessage = errorMessage;
+    this.loading = false;
   }
 
   addToMyMediaLibrary(media: MediaDTO) {
+    this.loading = true;
+
     this.mediaUtilsService.upsertUserMedia(
       media,
       'add',
@@ -100,6 +111,7 @@ export class MediaDetailsComponent {
         };
         this.media!.userMediaId = userMediaId;
         this.media!.inUserMediaLibrary = true;
+        this.loading = false;
       },
       this.errorFunction
     );
@@ -114,6 +126,7 @@ export class MediaDetailsComponent {
       };
       this.media!.userMediaId = userMediaId;
       this.media!.inUserMediaLibrary = true;
+      this.loading = false;
     };
 
     if (media.inUserMediaLibrary && media?.flag?.id === 2) {
@@ -123,8 +136,11 @@ export class MediaDetailsComponent {
         this.media!.flag = undefined;
         this.media!.userMediaId = undefined;
         this.media!.inUserMediaLibrary = false;
+        this.loading = false;
       };
     }
+
+    this.loading = true;
 
     this.mediaUtilsService.upsertUserMedia(
       media,
@@ -140,7 +156,10 @@ export class MediaDetailsComponent {
     const newFlagId: number = media.flag?.id === 1 ? 3 : 1;
     const text = newFlagId === 3
       ? $localize`:@@media.list.loan.confirmation.wishlist:Vous avez prêté ce média.`
-      : $localize`:@@media.list.loan.confirmation.wishlist:Vous avez récupéré ce média.`
+      : $localize`:@@media.list.loan.confirmation.wishlist:Vous avez récupéré ce média.`;
+
+    this.loading = true;
+
     this.mediaUtilsService.upsertUserMedia(
       media,
       'loan',
@@ -151,6 +170,7 @@ export class MediaDetailsComponent {
           id: newFlagId
         };
         this.media!.userMediaId = userMediaId;
+        this.loading = false;
       },
       this.errorFunction
     );
@@ -173,6 +193,8 @@ export class MediaDetailsComponent {
         label: $localize`:@@media.list.delete.confirm.validate:Valider`
       },
       accept: () => {
+        this.loading = true;
+
         this.mediaUtilsService.upsertUserMedia(
           media,
           'remove',
@@ -182,6 +204,7 @@ export class MediaDetailsComponent {
             this.media!.flag = undefined;
             this.media!.userMediaId = undefined;
             this.media!.inUserMediaLibrary = false;
+            this.loading = false;
           },
           this.errorFunction
         );

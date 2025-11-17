@@ -6,8 +6,10 @@ import { TagDTO } from './tag.model';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { RatingModule } from 'primeng/rating';
+import { BlockUIModule } from 'primeng/blockui';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { NotificationService } from '../notification/notification.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-tag-add',
@@ -16,7 +18,8 @@ import { NotificationService } from '../notification/notification.service';
     ButtonModule,
     DialogModule,
     InputTextModule,
-    RatingModule,
+    BlockUIModule,
+    ProgressSpinnerModule,
     ReactiveFormsModule,
     FormsModule
   ],
@@ -27,6 +30,7 @@ export class TagAddComponent {
   names: string[] = [''];
   errors: string[] = [''];
   errorMessage: string = '';
+  loading:boolean = false;
   @Output() saveTag = new EventEmitter<void>();
   
   constructor(
@@ -55,7 +59,10 @@ export class TagAddComponent {
 
     const tags = this.names.map(n => new TagDTO({ name: n.trim() }));
 
+    this.loading = true;
+
     this.tagService.createTags(tags)
+      .pipe(finalize(() => this.loading = false))
       .subscribe({
         next: () => {
           this.notif.showSuccess(

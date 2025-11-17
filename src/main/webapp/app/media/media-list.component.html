@@ -102,7 +102,9 @@
                                 <img [alt]="media.title" class="w-full max-h-[200px] object-cover rounded-md" [src]="media.coverUrl ? environment.apiPath + '/uploads/' + media.coverUrl : fallbackImgUrl" />
                             </a>
                             <p-tag [value]="media.mediaType?.name!" severity="contrast" class="absolute left-3 top-3 !font-medium" />
-                            <p-tag [value]="media.flag?.name!" [ngStyle]="{'background-color': media.flag?.color, 'color': 'white'}" class="absolute right-3 top-3 !font-medium" />
+                            @if (media.flag?.name) {
+                                <p-tag [value]="media.flag?.name!" [ngStyle]="{'background-color': media.flag?.color, 'color': 'white'}" class="absolute right-3 top-3 !font-medium" />
+                            }
                             @if (media.mediaReviews && media.mediaReviews.length) {
                                 <div class="absolute left-3 bottom-3 flex items-center gap-1">
                                     <i class="pi pi-star-fill text-yellow-300"></i>
@@ -170,7 +172,9 @@
                                     <img [alt]="media.title" class="w-full md:w-48 max-h-[200px] object-cover rounded-md" [src]="media.coverUrl ? environment.apiPath + '/uploads/' + media.coverUrl : fallbackImgUrl" />
                                 </a>
                                 <p-tag [value]="media.mediaType?.name!" severity="contrast" class="absolute left-3 top-3 !font-medium" />
-                                <p-tag [value]="media.flag?.name!" [ngStyle]="{'background-color': media.flag?.color, 'color': 'white'}" class="absolute right-3 top-3 !font-medium" />
+                                @if (media.flag?.name) {
+                                    <p-tag [value]="media.flag?.name!" [ngStyle]="{'background-color': media.flag?.color, 'color': 'white'}" class="absolute right-3 top-3 !font-medium" />
+                                }
                                 @if (media.mediaReviews && media.mediaReviews.length) {
                                     <div class="flex items-center gap-1 pt-2">
                                         <i class="pi pi-star-fill text-yellow-300"></i>
@@ -232,3 +236,6 @@
 </div>
 <p-confirmdialog />
 <p-toast />
+<p-blockUI [blocked]="loading">
+    <p-progressSpinner></p-progressSpinner>
+</p-blockUI>

@@ -9,7 +9,9 @@
     <ng-template #end>
         @if (user$ | async; as user) {
             <div class="flex items-center gap-2">
-                <input type="text" pInputText i18n-placeholder="@@header.search" placeholder="Rechercher" class="w-36" />
+                <form (submit)="search()">
+                    <input type="text" name="q" [(ngModel)]="q" pInputText i18n-placeholder="@@header.search" placeholder="Rechercher" class="w-36" />
+                </form>
                 <a routerLink="/users/edit/{{ user.id }}" class="flex">
                     <p-avatar [label]="!user.avatar ? user.username?.[0] : '' | uppercase" shape="circle">
                         <img [src]="user.avatar ? environment.apiPath + '/uploads/' + user.avatar : ''" alt="Photo de profil" i18n-alt="@@header.avatar.alt">

@@ -6,8 +6,10 @@ import { GenreDTO } from './genre.model';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { RatingModule } from 'primeng/rating';
+import { BlockUIModule } from 'primeng/blockui';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { NotificationService } from '../notification/notification.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-genre-add',
@@ -16,7 +18,8 @@ import { NotificationService } from '../notification/notification.service';
     ButtonModule,
     DialogModule,
     InputTextModule,
-    RatingModule,
+    BlockUIModule,
+    ProgressSpinnerModule,
     ReactiveFormsModule,
     FormsModule
   ],
@@ -27,6 +30,7 @@ export class GenreAddComponent {
   name: string = '';
   errorName: string = '';
   errorMessage: string = '';
+  loading:boolean = false;
   mediaTypeId = input<number>();
   @Output() saveGenre = new EventEmitter<void>();
   
@@ -53,7 +57,10 @@ export class GenreAddComponent {
       mediaType: this.mediaTypeId(),
     });
 
+    this.loading = true;
+
     this.genreService.createGenre(data)
+      .pipe(finalize(() => this.loading = false))
       .subscribe({
         next: () => {
           this.notif.showSuccess(

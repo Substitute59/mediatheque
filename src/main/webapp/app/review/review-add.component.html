@@ -22,3 +22,6 @@
         <p class="w-full text-sm text-red-500 mt-2">{{ errorMessage }}</p>
     }
 </p-dialog>
+<p-blockUI [blocked]="loading">
+    <p-progressSpinner></p-progressSpinner>
+</p-blockUI>

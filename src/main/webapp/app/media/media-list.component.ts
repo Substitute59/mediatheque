@@ -17,8 +17,10 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { Select, SelectChangeEvent } from 'primeng/select';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
-import { NotificationService } from '../notification/notification.service';
+import { BlockUIModule } from 'primeng/blockui';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { environment } from 'environments/environment';
+import { finalize } from 'rxjs/operators';
 
 interface SelectOption {
   label: string;
@@ -38,6 +40,8 @@ interface SelectOption {
     Select,
     TagModule,
     ToastModule,
+    BlockUIModule,
+    ProgressSpinnerModule,
     RouterLink
   ],
   templateUrl: './media-list.component.html',
@@ -68,8 +72,10 @@ export class MediaListComponent {
   fallbackImgUrl: string = $localize`:@@media.img.default:https://placehold.co/600x400?text=Sans+Image`;
   errorMediaId: number = 0;
   environment = environment;
+  loading:boolean = false;
 
   queryParams = toSignal(this.route.queryParams, { initialValue: {} as Params });
+  params = toSignal(this.route.params, { initialValue: {} as Params });
   flagId = computed(() => {
     const params = this.queryParams();
     const flagIdParam = params['flagId'];
@@ -80,6 +86,11 @@ export class MediaListComponent {
     const mediaTypeIdParam = params['mediaTypeId'];
     return mediaTypeIdParam ? +mediaTypeIdParam : null;
   });
+  q = computed(() => {
+    const params = this.params();
+    const qParam = params['q'];
+    return qParam ? String(qParam) : null;
+  });
 
   constructor(
     private mediaService: MediaService,
@@ -87,17 +98,18 @@ export class MediaListComponent {
     private auth: AuthService,
     private errorHandler: ErrorHandler,
     private route: ActivatedRoute,
-    private confirmationService: ConfirmationService,
-    private notif: NotificationService
+    private confirmationService: ConfirmationService
   ) {
     effect(() => {
       const flag = this.flagId();
       const type = this.mediaTypeId();
-      this.loadData(flag, type);
+      const q = this.q();
+      const isSearch: boolean = this.route.snapshot.routeConfig?.path?.startsWith('search')!;
+      this.loadData(flag, type, isSearch, q);
     });
   }
 
-  loadData(flag: number | null, type: number | null) {
+  loadData(flag: number | null, type: number | null, isSearch: boolean, q: string | null) {
     this.sortByOptions = [
       { label: $localize`:@@media.list.sortBy.default:Trier par`, value: '' },
       { label: $localize`:@@media.list.sortBy.titleAsc:Titre (A → Z)`, value: 'titleAsc' },
@@ -106,9 +118,18 @@ export class MediaListComponent {
       { label: $localize`:@@media.list.sortBy.addedDateAsc:Date d'ajout (ancien → récent)`, value: 'addedDateAsc' }
     ];
     this.selectedSortByOption = this.sortByOptions[0];
-    this.mediaService.getAllMedias(this.auth.currentUserValue?.id!)
+    this.loading = true;
+
+    this.mediaService.getAllMedias(this.auth.currentUserValue?.id!, isSearch)
+      .pipe(finalize(() => this.loading = false))
       .subscribe({
         next: (data) => {
+          if (q) {
+            data = data.filter(media => 
+              (media.title?.toLocaleLowerCase() ?? '').includes(q?.toLocaleLowerCase()) ||
+              (media.description?.toLocaleLowerCase() ?? '').includes(q?.toLocaleLowerCase())
+            );
+          }
           this.firstLoadMedias = data;
           this.medias = data;
           if (type) {
@@ -116,7 +137,7 @@ export class MediaListComponent {
           }
           if (flag) {
             this.medias = this.medias.filter(media => media.flag?.id === flag);
-          } else {
+          } else if (!flag && !isSearch) {
             this.firstLoadMedias = this.firstLoadMedias.filter(media => media.flag?.id !== 2);
             this.medias = this.medias.filter(media => media.flag?.id !== 2);
           }
@@ -154,11 +175,11 @@ export class MediaListComponent {
         );
         this.medias?.map(media => {
           if (media.mediaType) {
-            const exists = options.find(option => option.value === media.mediaType!.id!.toString());
+            const exists = options.find(option => option.value === media.mediaType?.id?.toString());
             if (!exists) {
               options.push({
                 label: media.mediaType.name!,
-                value: media.mediaType.id!.toString()
+                value: media.mediaType?.id?.toString()!
               });
             }
           }
@@ -170,11 +191,11 @@ export class MediaListComponent {
         );
         this.medias?.map(media => {
           if (media.genre) {
-            const exists = options.find(option => option.value === media.genre!.id!.toString());
+            const exists = options.find(option => option.value === media.genre?.id?.toString());
             if (!exists) {
               options.push({
                 label: media.genre.name!,
-                value: media.genre.id!.toString()
+                value: media.genre?.id?.toString()!
               });
             }
           }
@@ -187,11 +208,11 @@ export class MediaListComponent {
         this.medias?.map(media => {
           if (media.mediaMediaArtists) {
             media.mediaMediaArtists.forEach(artist => {
-              const exists = options.find(option => option.value === artist.id!.toString());
+              const exists = options.find(option => option.value === artist.id?.toString());
               if (!exists) {
                 options.push({
                   label: artist.name!,
-                  value: artist.id!.toString()
+                  value: artist.id?.toString()!
                 });
               }
             });
@@ -205,11 +226,11 @@ export class MediaListComponent {
         this.medias?.map(media => {
           if (media.mediaCollections) {
             media.mediaCollections.forEach(collection => {
-              const exists = options.find(option => option.value === collection.id!.toString());
+              const exists = options.find(option => option.value === collection.id?.toString());
               if (!exists) {
                 options.push({
                   label: collection.name!,
-                  value: collection.id!.toString()
+                  value: collection.id?.toString()!
                 });
               }
             });
@@ -223,11 +244,11 @@ export class MediaListComponent {
         this.medias?.map(media => {
           if (media.mediaTagTags) {
             media.mediaTagTags.forEach(tag => {
-              const exists = options.find(option => option.value === tag.id!.toString());
+              const exists = options.find(option => option.value === tag.id?.toString());
               if (!exists) {
                 options.push({
                   label: tag.name!,
-                  value: tag.id!.toString()
+                  value: tag.id?.toString()!
                 });
               }
             });
@@ -240,11 +261,11 @@ export class MediaListComponent {
         );
         this.medias?.map(media => {
           if (media.flag) {
-            const exists = options.find(option => option.value === media.flag!.id!.toString());
+            const exists = options.find(option => option.value === media.flag?.id?.toString());
             if (!exists) {
               options.push({
                 label: media.flag.name!,
-                value: media.flag.id!.toString()
+                value: media.flag.id?.toString()!
               });
             }
           }
@@ -354,6 +375,8 @@ export class MediaListComponent {
         label: $localize`:@@media.list.delete.confirm.validate:Valider`
       },
       accept: () => {
+        this.loading = true;
+
         this.mediaUtilsService.upsertUserMedia(
           media,
           'remove',
@@ -362,9 +385,11 @@ export class MediaListComponent {
           (mediaId) => {
             this.firstLoadMedias = this.firstLoadMedias?.filter(media => media.id !== mediaId);
             this.medias = this.medias?.filter(media => media.id !== mediaId);
+            this.loading = false;
           },
           (mediaId) => {
             this.errorMediaId = parseInt(mediaId, 10);
+            this.loading = false;
           }
         );
       },
