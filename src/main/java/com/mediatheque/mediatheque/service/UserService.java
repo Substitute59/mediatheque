@@ -1,5 +1,6 @@
 package com.mediatheque.mediatheque.service;
 
+import com.mediatheque.mediatheque.config.R2Config;
 import com.mediatheque.mediatheque.domain.User;
 import com.mediatheque.mediatheque.events.BeforeDeleteUser;
 import com.mediatheque.mediatheque.model.UserDTO;
@@ -7,15 +8,17 @@ import com.mediatheque.mediatheque.repos.UserRepository;
 import com.mediatheque.mediatheque.util.CustomCollectors;
 import com.mediatheque.mediatheque.util.NotFoundException;
 
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.core.sync.RequestBody;
+
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,6 +28,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class UserService {
+
+    @Autowired
+    private S3Client s3Client;
+
+    @Autowired
+    private R2Config r2Config;
 
     private final UserRepository userRepository;
     private final ApplicationEventPublisher publisher;
@@ -64,21 +73,30 @@ public class UserService {
         }
 
         if (avatar != null && !avatar.isEmpty()) {
-            Path uploadPath = Paths.get("uploads");
-
-            if (user.getAvatar() != null && !user.getAvatar().isEmpty()) {
-                Path oldAvatarPath = uploadPath.resolve(user.getAvatar());
+            // ----- SUPPRESSION DE L’ANCIEN AVATAR DANS R2 -----
+            if (user.getAvatar() != null && !user.getAvatar().isBlank()) {
                 try {
-                    Files.deleteIfExists(oldAvatarPath);
-                } catch (IOException e) {
-                    System.err.println("❌ Impossible de supprimer l'ancien avatar : " + e.getMessage());
+                    s3Client.deleteObject(DeleteObjectRequest.builder()
+                            .bucket(r2Config.getBucket())
+                            .key(user.getAvatar())
+                            .build());
+                } catch (Exception e) {
+                    System.err.println("⚠️ Impossible de supprimer l’ancien avatar sur R2 : " + e.getMessage());
                 }
             }
-
-            String fileName = UUID.randomUUID() + "_" + avatar.getOriginalFilename();
-            Files.createDirectories(uploadPath);
-            Files.copy(avatar.getInputStream(), uploadPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
-            user.setAvatar(fileName);
+            // ----- UPLOAD DU NOUVEL AVATAR -----
+            String newFileName = UUID.randomUUID() + "_" + avatar.getOriginalFilename();
+            s3Client.putObject(
+                    PutObjectRequest.builder()
+                            .bucket(r2Config.getBucket())
+                            .key(newFileName)
+                            .contentType(avatar.getContentType())
+                            .build(),
+                    RequestBody.fromBytes(avatar.getBytes())
+            );
+            // URL publique pour afficher dans Angular
+            String publicUrl = r2Config.getPublicUrl() + "/" + newFileName;
+            user.setAvatar(publicUrl);
         }
 
         userRepository.save(user);

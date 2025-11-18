@@ -20,7 +20,7 @@
                 </div>
                 <div class="flex flex-col gap-2 w-full">
                     <label for="avatar" class="text-surface-900 dark:text-surface-0 font-medium leading-normal" i18n="@@user.edit.form.avatar">Avatar</label>
-                    <img class="w-50" [src]="user.avatar ? environment.apiPath + '/uploads/' + user.avatar : ''" alt="Photo de profil" i18n-alt="@@user.edit.form.avatar.alt">
+                    <img class="w-50" [src]="user.avatar || ''" alt="Photo de profil" i18n-alt="@@user.edit.form.avatar.alt">
                     <p-fileupload
                         #uploader
                         mode="advanced"

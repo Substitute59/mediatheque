@@ -8,7 +8,7 @@
                     <img
                         [alt]="media.title"
                         class="w-full max-h-[600px] object-cover rounded-md"
-                        [src]="media.coverUrl ? environment.apiPath + '/uploads/' + media.coverUrl : fallbackImgUrl"
+                        [src]="media.coverUrl || fallbackImgUrl"
                     />
                     <p-tag
                         [value]="media.mediaType?.name!"

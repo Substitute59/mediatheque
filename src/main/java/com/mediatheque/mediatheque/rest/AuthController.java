@@ -1,10 +1,16 @@
 package com.mediatheque.mediatheque.rest;
 
+import com.mediatheque.mediatheque.config.R2Config;
 import com.mediatheque.mediatheque.domain.User;
 import com.mediatheque.mediatheque.repos.UserRepository;
 import com.mediatheque.mediatheque.security.JwtTokenProvider;
 import com.mediatheque.mediatheque.service.PasswordResetService;
 
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.core.sync.RequestBody;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -13,15 +19,17 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.OffsetDateTime;
 import java.util.Map;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.Path;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
+    @Autowired
+    private S3Client s3Client;
+
+    @Autowired
+    private R2Config r2Config;
 
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
@@ -61,11 +69,20 @@ public class AuthController {
         user.setCreatedAt(OffsetDateTime.now());
         
         if (avatar != null && !avatar.isEmpty()) {
+            // Nouveau nom unique
             String fileName = UUID.randomUUID() + "_" + avatar.getOriginalFilename();
-            Path uploadPath = Paths.get("uploads");
-            Files.createDirectories(uploadPath);
-            Files.copy(avatar.getInputStream(), uploadPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
-            user.setAvatar(fileName);
+            // Upload vers Cloudflare R2
+            s3Client.putObject(
+                    PutObjectRequest.builder()
+                            .bucket(r2Config.getBucket())
+                            .key(fileName)
+                            .contentType(avatar.getContentType())
+                            .build(),
+                    RequestBody.fromBytes(avatar.getBytes())
+            );
+            // URL publique pour Angular
+            String publicUrl = r2Config.getPublicUrl() + "/" + fileName;
+            user.setAvatar(publicUrl);
         }
 
         userRepository.save(user);
@@ -73,7 +90,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> req) {
+    public ResponseEntity<?> login(@org.springframework.web.bind.annotation.RequestBody Map<String, String> req) {
         User user = userRepository.findAll()
                 .stream()
                 .filter(u -> u.getUsername().equals(req.get("username")))
@@ -96,7 +113,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<?> refresh(@RequestBody Map<String, String> req) {
+    public ResponseEntity<?> refresh(@org.springframework.web.bind.annotation.RequestBody Map<String, String> req) {
         String refreshToken = req.get("refreshToken");
 
         if (refreshToken == null || refreshToken.isBlank()) {
@@ -118,14 +135,14 @@ public class AuthController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> body) {
+    public ResponseEntity<?> forgotPassword(@org.springframework.web.bind.annotation.RequestBody Map<String, String> body) {
         String username = body.get("email");
         passwordResetService.requestPasswordReset(username);
         return ResponseEntity.ok(Map.of("message", "If an account exists, a reset link was sent."));
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> body) {
+    public ResponseEntity<?> resetPassword(@org.springframework.web.bind.annotation.RequestBody Map<String, String> body) {
         String token = body.get("token");
         String newPassword = body.get("password");
         boolean ok = passwordResetService.resetPassword(token, newPassword);

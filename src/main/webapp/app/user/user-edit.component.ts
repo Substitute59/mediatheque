@@ -12,7 +12,6 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { UserService } from './user.service';
 import { AuthService } from '../auth/auth.service';
 import { UserEditSchema } from './user.schema';
-import { environment } from 'environments/environment';
 import { take } from 'rxjs/operators';
 import { NotificationService } from '../notification/notification.service';
 import { finalize } from 'rxjs/operators';
@@ -43,7 +42,6 @@ export class UserEditComponent {
   errorField: string | number = '';
   errorMessage: string = '';
   user$ = this.auth.currentUser
-  environment = environment
   loading:boolean = false;
 
   constructor(

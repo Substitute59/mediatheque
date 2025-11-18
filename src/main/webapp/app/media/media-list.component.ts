@@ -19,7 +19,6 @@ import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { BlockUIModule } from 'primeng/blockui';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { environment } from 'environments/environment';
 import { finalize } from 'rxjs/operators';
 
 interface SelectOption {
@@ -71,7 +70,6 @@ export class MediaListComponent {
   rows: number = 12;
   fallbackImgUrl: string = $localize`:@@media.img.default:https://placehold.co/600x400?text=Sans+Image`;
   errorMediaId: number = 0;
-  environment = environment;
   loading:boolean = false;
 
   queryParams = toSignal(this.route.queryParams, { initialValue: {} as Params });

@@ -8,7 +8,6 @@ import { BadgeModule } from 'primeng/badge';
 import { AvatarModule } from 'primeng/avatar';
 import { InputTextModule } from 'primeng/inputtext';
 import { AuthService } from '../../auth/auth.service';
-import { environment } from 'environments/environment';
 
 @Component({
   selector: 'app-header',
@@ -27,7 +26,6 @@ import { environment } from 'environments/environment';
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
-  environment = environment
   items: MenuItem[] | undefined;
   q: string = '';
 

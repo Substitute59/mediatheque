@@ -27,7 +27,6 @@ import { PlatformAddComponent } from '../platform/platform-add.component';
 import { TagAddComponent } from '../tag/tag-add.component';
 import { CollectionAddComponent } from '../collection/collection-add.component';
 import { ArtistAddComponent } from '../artist/artist-add.component';
-import { environment } from 'environments/environment';
 import { finalize } from 'rxjs/operators';
 
 interface UploadEvent {
@@ -74,7 +73,6 @@ export class MediaAddComponent {
   now: string = new Date().toISOString();
   currentId?: number;
   coverUrl?: string;
-  environment = environment;
   media?: MediaDTO;
   loading:boolean = false;
 

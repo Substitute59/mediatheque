@@ -100,7 +100,7 @@
                 </p-fileupload>
 
                 @if (coverUrl) {
-                    <img class="w-50" [src]="environment.apiPath + '/uploads/' + coverUrl" alt="Photo de couverture" i18n-alt="@@media.add.form.coverUrl.alt">
+                    <img class="w-50" [src]="coverUrl" alt="Photo de couverture" i18n-alt="@@media.add.form.coverUrl.alt">
                 }
             </div>
 

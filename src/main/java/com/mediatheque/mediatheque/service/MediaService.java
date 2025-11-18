@@ -1,5 +1,6 @@
 package com.mediatheque.mediatheque.service;
 
+import com.mediatheque.mediatheque.config.R2Config;
 import com.mediatheque.mediatheque.domain.Genre;
 import com.mediatheque.mediatheque.domain.Media;
 import com.mediatheque.mediatheque.domain.MediaArtist;
@@ -39,6 +40,12 @@ import com.mediatheque.mediatheque.util.CustomCollectors;
 import com.mediatheque.mediatheque.util.NotFoundException;
 import com.mediatheque.mediatheque.util.ReferencedException;
 
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.core.sync.RequestBody;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,6 +57,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Sort;
@@ -60,6 +68,12 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class MediaService {
+
+    @Autowired
+    private S3Client s3Client;
+
+    @Autowired
+    private R2Config r2Config;
 
     private final MediaArtistService mediaArtistService;
 
@@ -161,11 +175,20 @@ public class MediaService {
         mapToEntity(mediaDTO, media);
 
         if (coverFile != null && !coverFile.isEmpty()) {
+            // Nouveau nom unique
             String fileName = UUID.randomUUID() + "_" + coverFile.getOriginalFilename();
-            Path uploadPath = Paths.get("uploads");
-            Files.createDirectories(uploadPath);
-            Files.copy(coverFile.getInputStream(), uploadPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
-            media.setCoverUrl(fileName);
+            // Upload vers Cloudflare R2
+            s3Client.putObject(
+                    PutObjectRequest.builder()
+                            .bucket(r2Config.getBucket())
+                            .key(fileName)
+                            .contentType(coverFile.getContentType())
+                            .build(),
+                    RequestBody.fromBytes(coverFile.getBytes())
+            );
+            // URL publique pour Angular
+            String publicUrl = r2Config.getPublicUrl() + "/" + fileName;
+            media.setCoverUrl(publicUrl);
         }
 
         final Integer newMediaId = mediaRepository.save(media).getId();
@@ -193,21 +216,30 @@ public class MediaService {
         mapToEntity(mediaDTO, media);
 
         if (coverFile != null && !coverFile.isEmpty()) {
-            Path uploadPath = Paths.get("uploads");
-
-            if (media.getCoverUrl() != null && !media.getCoverUrl().isEmpty()) {
-                Path oldAvatarPath = uploadPath.resolve(media.getCoverUrl());
+            // ----- SUPPRESSION DE L’ANCIENNNE COVER DANS R2 -----
+            if (media.getCoverUrl() != null && !media.getCoverUrl().isBlank()) {
                 try {
-                    Files.deleteIfExists(oldAvatarPath);
-                } catch (IOException e) {
-                    System.err.println("❌ Impossible de supprimer l'ancienne couverture : " + e.getMessage());
+                    s3Client.deleteObject(DeleteObjectRequest.builder()
+                            .bucket(r2Config.getBucket())
+                            .key(media.getCoverUrl())
+                            .build());
+                } catch (Exception e) {
+                    System.err.println("⚠️ Impossible de supprimer l’ancienne couverture sur R2 : " + e.getMessage());
                 }
             }
-
-            String fileName = UUID.randomUUID() + "_" + coverFile.getOriginalFilename();
-            Files.createDirectories(uploadPath);
-            Files.copy(coverFile.getInputStream(), uploadPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
-            media.setCoverUrl(fileName);
+            // ----- UPLOAD DE LA NOUVELLE COVER -----
+            String newFileName = UUID.randomUUID() + "_" + coverFile.getOriginalFilename();
+            s3Client.putObject(
+                    PutObjectRequest.builder()
+                            .bucket(r2Config.getBucket())
+                            .key(newFileName)
+                            .contentType(coverFile.getContentType())
+                            .build(),
+                    RequestBody.fromBytes(coverFile.getBytes())
+            );
+            // URL publique pour afficher dans Angular
+            String publicUrl = r2Config.getPublicUrl() + "/" + newFileName;
+            media.setCoverUrl(publicUrl);
         }
 
         if (mediaDTO.getMediaMediaCollections() != null) {

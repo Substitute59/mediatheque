@@ -17,7 +17,6 @@ import { ToastModule } from 'primeng/toast';
 import { BlockUIModule } from 'primeng/blockui';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ConfirmationService } from 'primeng/api';
-import { environment } from 'environments/environment';
 import { ReviewAddComponent } from '../review/review-add.component';
 import { finalize } from 'rxjs/operators';
 
@@ -47,7 +46,6 @@ export class MediaDetailsComponent {
   fallbackImgUrl: string = $localize`:@@media.img.default:https://placehold.co/600x400?text=Sans+Image`;
   errorMessage?: string;
   myReview?: ReviewDTO;
-  environment = environment;
   loading:boolean = false;
 
   constructor(

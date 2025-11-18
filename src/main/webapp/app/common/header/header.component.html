@@ -14,7 +14,7 @@
                 </form>
                 <a routerLink="/users/edit/{{ user.id }}" class="flex">
                     <p-avatar [label]="!user.avatar ? user.username?.[0] : '' | uppercase" shape="circle">
-                        <img [src]="user.avatar ? environment.apiPath + '/uploads/' + user.avatar : ''" alt="Photo de profil" i18n-alt="@@header.avatar.alt">
+                        <img [src]="user.avatar || ''" alt="Photo de profil" i18n-alt="@@header.avatar.alt">
                     </p-avatar>
                 </a>
                 <button class="flex cursor-pointer" (click)="logout()"><i class="pi pi-sign-out text-white"></i></button>
